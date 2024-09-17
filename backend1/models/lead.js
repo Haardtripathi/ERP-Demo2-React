@@ -15,7 +15,7 @@ const leadSchema = new Schema(
       },
     },
     date: {
-      type: Date,
+      type: String,
       default: () => {
         // Get the current date and time in Indian timezone
         const options = {
@@ -28,7 +28,7 @@ const leadSchema = new Schema(
           second: '2-digit',
         };
         const formatter = new Intl.DateTimeFormat([], options);
-        return new Date(formatter.format(new Date()));
+        return formatter.format(new Date());
       },
       immutable: true, // This will prevent the date from being modified
     },

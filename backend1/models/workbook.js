@@ -19,7 +19,7 @@ const workbookSchema = new Schema(
       type: Schema.Types.ObjectId,
     },
     date: {
-      type: Date,
+      type: String,
       default: () => {
         // Get the current date and time in Indian timezone
         const options = {

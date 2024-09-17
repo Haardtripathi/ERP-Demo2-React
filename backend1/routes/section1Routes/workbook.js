@@ -12,7 +12,7 @@ router.get("/", workbookController.getIndex);
 
 router.get("/workbook", workbookController.getWorkbook);
 // router.post('/shiftToPending', workbookController.shiftToPending); // Adjust as needed
-// router.post('/deleteWorkbookItem', workbookController.deleteWorkbookItem);
+router.post('/deleteWorkbookItem', workbookController.deleteWorkbookItem);
 
 
 module.exports = router;

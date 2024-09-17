@@ -1,17 +1,26 @@
 import React from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
-const TableRow = ({ rowData, setData }) => {
+const CommonRow = ({ rowData, setData }) => {
     const API_URL = "http://localhost:5000";
+    const location = useLocation();
 
     const handleDelete = async (event) => {
+
         event.preventDefault();
         try {
-            const response = await axios.post(`${API_URL}/deleteWorkbookItem`, {
+            let endpoint;
+
+            if (location.pathname === "/incoming") {
+                endpoint = `${API_URL}/deleteIncomingItem`
+            } else {
+                endpoint = `${API_URL}/deleteLeadItem`
+            }
+            const response = await axios.post(endpoint, {
                 itemId: rowData._id,
-                dataId: rowData.dataId,
-                dataValue: rowData.data.value
             });
+            console.log(response);
 
             if (response.data.success) {
                 console.log('Item deleted successfully');
@@ -23,10 +32,9 @@ const TableRow = ({ rowData, setData }) => {
         }
     };
 
+
     return (
         <tr className="hover:bg-gray-100 text-sm">
-            <td className="py-2 px-4 border-b border-gray-300">ONe</td>
-            <td className="py-2 px-4 border-b border-gray-300">{rowData.data.value}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.date}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.source.value}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.CM_First_Name}</td>
@@ -52,4 +60,4 @@ const TableRow = ({ rowData, setData }) => {
     );
 };
 
-export default TableRow;
+export default CommonRow;

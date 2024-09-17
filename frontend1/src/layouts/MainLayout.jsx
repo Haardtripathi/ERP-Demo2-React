@@ -6,7 +6,10 @@ import SideNav from '../components/SideNav';
 const MainLayout = () => {
     return (
         <div className="flex flex-col min-h-screen">
-            <Navbar />
+            {/* Make Navbar sticky */}
+            <div className="sticky top-0 z-50">
+                <Navbar />
+            </div>
             <div className="flex flex-1">
                 <SideNav />
                 <main className="flex-1 p-4 overflow-hidden">
@@ -16,6 +19,5 @@ const MainLayout = () => {
         </div>
     );
 };
-
 
 export default MainLayout;

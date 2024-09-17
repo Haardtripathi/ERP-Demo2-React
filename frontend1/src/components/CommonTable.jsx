@@ -1,5 +1,6 @@
 import React from 'react';
-import TableRow from './TableRow';
+import CommonRow from './CommonRow';
+import { Link, useLocation } from 'react-router-dom';
 
 const Table = ({ data, setData }) => {
     return (
@@ -7,8 +8,6 @@ const Table = ({ data, setData }) => {
             <table className="min-w-full bg-white border border-gray-300 text-lg">
                 <thead>
                     <tr className="bg-gray-800 text-white text-l">
-                        <th className="py-4 px-6 border-b border-gray-300">Action</th>
-                        <th className="py-4 px-6 border-b border-gray-300">Data</th>
                         <th className="py-4 px-6 border-b border-gray-300">Date</th>
                         <th className="py-4 px-6 border-b border-gray-300">Source</th>
                         <th className="py-4 px-6 border-b border-gray-300">CM First Name</th>
@@ -30,7 +29,7 @@ const Table = ({ data, setData }) => {
                 </thead>
                 <tbody>
                     {data.map((rowData) => (
-                        <TableRow key={rowData._id} rowData={rowData} setData={setData} />
+                        <CommonRow key={rowData._id} rowData={rowData} setData={setData} />
                     ))}
                 </tbody>
             </table>

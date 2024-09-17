@@ -68,7 +68,7 @@ const Navbar = () => {
                         {location.pathname === '/incoming' && (
                             <Link className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" to="/addIncomingData">Add Incoming</Link>
                         )}
-                        {location.pathname === '/leads' && (
+                        {location.pathname === '/lead' && (
                             <Link className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors" to="/addLeadData">Add Lead</Link>
                         )}
                     </div>
