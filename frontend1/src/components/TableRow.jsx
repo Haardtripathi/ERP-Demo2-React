@@ -22,9 +22,9 @@ const TableRow = ({ rowData, setData }) => {
             console.error("Error deleting item:", error);
         }
     };
-
     return (
         <tr className="hover:bg-gray-100 text-sm">
+
             <td className="py-2 px-4 border-b border-gray-300">ONe</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.data.value}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.date}</td>

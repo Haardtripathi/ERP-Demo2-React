@@ -123,3 +123,9 @@ exports.addLeadItem = async (req, res) => {
         res.status(500).send('Error processing data.');
     }
 };
+
+
+exports.getEditLeadItem = async (req, res) => {
+    const itemId = req.params.id;
+    console.log(itemId);
+}

@@ -12,7 +12,7 @@ const MainLayout = () => {
             </div>
             <div className="flex flex-1">
                 <SideNav />
-                <main className="flex-1 p-4 overflow-hidden">
+                <main className="flex-1 p-4 overflow-hidden bg-gray-300">
                     <Outlet />
                 </main>
             </div>

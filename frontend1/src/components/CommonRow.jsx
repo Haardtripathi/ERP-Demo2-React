@@ -1,10 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const CommonRow = ({ rowData, setData }) => {
     const API_URL = "http://localhost:5000";
     const location = useLocation();
+    const navigate = useNavigate();
 
     const handleDelete = async (event) => {
 
@@ -32,9 +33,30 @@ const CommonRow = ({ rowData, setData }) => {
         }
     };
 
+    const getEdit = (e) => {
+        e.preventDefault();
+
+        let editRoute;
+        // Determine the correct edit route based on the location
+        if (location.pathname === "/incoming") {
+            editRoute = `/editLeadItem/${rowData._id}`;
+        } else {
+            editRoute = `/editLeadItem/${rowData._id}`;
+        }
+
+        // Navigate to the corresponding edit route
+        navigate(editRoute);
+    };
+
 
     return (
         <tr className="hover:bg-gray-100 text-sm">
+            {/* Edit button */}
+            <td className="py-2 px-4 border-b border-gray-300">
+                <form onSubmit={getEdit}>
+                    <button className="bg-blue-500 text-white py-1 px-2 rounded" type="submit">Edit</button>
+                </form>
+            </td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.date}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.source.value}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.CM_First_Name}</td>
