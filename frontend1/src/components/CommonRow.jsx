@@ -8,24 +8,18 @@ const CommonRow = ({ rowData, setData }) => {
     const navigate = useNavigate();
 
     const handleDelete = async (event) => {
-
         event.preventDefault();
         try {
-            let endpoint;
+            let endpoint = location.pathname === "/incoming"
+                ? `${API_URL}/deleteIncomingItem`
+                : `${API_URL}/deleteLeadItem`;
 
-            if (location.pathname === "/incoming") {
-                endpoint = `${API_URL}/deleteIncomingItem`
-            } else {
-                endpoint = `${API_URL}/deleteLeadItem`
-            }
             const response = await axios.post(endpoint, {
                 itemId: rowData._id,
             });
-            console.log(response);
 
             if (response.data.success) {
                 console.log('Item deleted successfully');
-                // Immediately remove the deleted item from the current state
                 setData(prevData => prevData.filter(item => item._id !== rowData._id));
             }
         } catch (error) {
@@ -33,25 +27,17 @@ const CommonRow = ({ rowData, setData }) => {
         }
     };
 
-    const getEdit = (e) => {
-        e.preventDefault();
+    const getEdit = (event) => {
+        event.preventDefault();
+        let editEndpoint = location.pathname === "/incoming"
+            ? `/editIncomingItem/${rowData._id}`
+            : `/editLeadItem/${rowData._id}`;
 
-        let editRoute;
-        // Determine the correct edit route based on the location
-        if (location.pathname === "/incoming") {
-            editRoute = `/editLeadItem/${rowData._id}`;
-        } else {
-            editRoute = `/editLeadItem/${rowData._id}`;
-        }
-
-        // Navigate to the corresponding edit route
-        navigate(editRoute);
+        navigate(editEndpoint);
     };
-
 
     return (
         <tr className="hover:bg-gray-100 text-sm">
-            {/* Edit button */}
             <td className="py-2 px-4 border-b border-gray-300">
                 <form onSubmit={getEdit}>
                     <button className="bg-blue-500 text-white py-1 px-2 rounded" type="submit">Edit</button>

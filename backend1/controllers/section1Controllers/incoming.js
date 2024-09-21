@@ -128,3 +128,23 @@ exports.postAddIncomingData = async (req, res, next) => {
         res.status(500).json({ message: 'Error saving data', error });
     }
 };
+
+exports.getEditIncomingItem = async (req, res) => {
+    const itemId = req.params.id;
+    try {
+        const data = await Dropdown.find();
+
+        const formattedData = data.map((item) => ({
+            name: item.name,
+            values: item.values,
+        }));
+        const incomingData = await Incoming.findById(itemId);
+        console.log(formattedData, incomingData);
+
+        res.json({ dropdowns: formattedData, prevData: incomingData }); // Send as JSON response
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+
+}

@@ -13,4 +13,6 @@ router.get('/incoming', incomingController.getIncomingData)
 
 router.post('/deleteIncomingItem', incomingController.deleteIncomingItem)
 
+router.get('/editIncomingItem/:id', incomingController.getEditIncomingItem)
+
 module.exports = router;
