@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 import FormInputIncoming from '../components/FormInputIncoming';
 import FormSelectIncoming from '../components/FormSelectIncoming';
 
+const API_URL = "http://localhost:5000";
 
 const EditIncomingPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [dropdowns, setDropdowns] = useState([]);
     const [formData, setFormData] = useState({
-        source: '', // or null if that's preferable
+        source: '',
         cmFirstName: '',
         cmLastName: '',
         cmphone: '',
@@ -27,111 +29,80 @@ const EditIncomingPage = () => {
         comment: '',
     });
     const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
-    const API_URL = "http://localhost:5000";
-
 
     useEffect(() => {
         const fetchDropdownsAndPrevData = async () => {
             try {
-                const response = await axios.get(`${API_URL}/editIncomingItem/${id}`);
-                const prevData = response.data.prevData;
-
-                // Extract values from dropdown_data objects in prevData
-                const formattedData = {
-                    source: prevData.source?.value || '',  // Extract the 'value' from nested objects
-                    cmFirstName: prevData.CM_First_Name || '',
-                    cmLastName: prevData.CM_Last_Name || '',
-                    cmphone: prevData.CM_Phone || '',
-                    cmPhoneAlternateNumber: prevData.alternate_Phone || '',
-                    agent_name: prevData.agent_name?.value || '',
-                    language: prevData.language?.value || '',
-                    disease: prevData.disease?.value || '',
-                    age: prevData.age || '',
-                    height: prevData.height || '',
-                    weight: prevData.weight || '',
-                    state: prevData.state?.value || '',
-                    city: prevData.city || '',
-                    remark: prevData.remark?.value || '',
-                    comment: prevData.comment || ''
-                };
-
-                // Set form data with formatted values
-                setFormData(formattedData);
-                setDropdowns(response.data.dropdowns); // Dropdown data remains as is
-
-                console.log(formattedData); // To ensure the data is set correctly
+                const { data } = await axios.get(`${API_URL}/editIncomingItem/${id}`);
+                setDropdowns(data.dropdowns);
+                setFormData(formatPrevData(data.prevData));
             } catch (error) {
-                console.error('Error fetching dropdown data:', error);
+                console.error('Error fetching data:', error);
             }
         };
         fetchDropdownsAndPrevData();
     }, [id]);
 
-    const handleBackClick = () => {
-        navigate('/incoming');
-    };
+    const formatPrevData = (prevData) => ({
+        source: prevData.source?.value || '',
+        cmFirstName: prevData.CM_First_Name || '',
+        cmLastName: prevData.CM_Last_Name || '',
+        cmphone: prevData.CM_Phone || '',
+        cmPhoneAlternateNumber: prevData.alternate_Phone || '',
+        agent_name: prevData.agent_name?.value || '',
+        language: prevData.language?.value || '',
+        disease: prevData.disease?.value || '',
+        age: prevData.age || '',
+        height: prevData.height || '',
+        weight: prevData.weight || '',
+        state: prevData.state?.value || '',
+        city: prevData.city || '',
+        remark: prevData.remark?.value || '',
+        comment: prevData.comment || ''
+    });
 
-    // Handle form input changes
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value, type } = e.target;
+        const newValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
+        setFormData(prev => ({ ...prev, [name]: newValue }));
     };
 
-    // Validate form inputs
     const validate = () => {
         const newErrors = {};
+        const requiredFields = ['source', 'cmFirstName', 'cmLastName', 'cmphone', 'agent_name', 'language', 'disease', 'age', 'height', 'weight', 'state', 'city', 'remark'];
+        const phoneRegex = /^\d{10}$/;
 
-        // Check if all fields are filled
-        for (const field in formData) {
-            if (formData[field] === undefined || formData[field] === null ||
-                (typeof formData[field] === 'string' && formData[field].trim() === '') ||
-                (typeof formData[field] !== 'string' && formData[field] === '')) {
-                newErrors[field] = "This field is required.";
-            }
-        }
+        requiredFields.forEach(field => {
+            if (!formData[field]) newErrors[field] = "This field is required.";
+        });
 
-        // Additional validations
-        const phoneRegex = /^\d{10}$/; // Indian phone number validation
-
-        if (formData.cmphone && typeof formData.cmphone === 'string' && !formData.cmphone.match(phoneRegex)) {
+        if (formData.cmphone && !phoneRegex.test(formData.cmphone)) {
             newErrors.cmphone = "Enter a valid 10-digit Indian phone number.";
         }
 
-        if (formData.cmPhoneAlternateNumber && typeof formData.cmPhoneAlternateNumber === 'string' && !formData.cmPhoneAlternateNumber.match(phoneRegex)) {
+        if (formData.cmPhoneAlternateNumber && !phoneRegex.test(formData.cmPhoneAlternateNumber)) {
             newErrors.cmPhoneAlternateNumber = "Enter a valid alternate 10-digit Indian phone number.";
         }
 
-        if (formData.age && (!/^\d+$/.test(formData.age) || formData.age <= 0)) {
-            newErrors.age = "Enter a valid age.";
-        }
-
-        if (formData.height && (!/^\d+$/.test(formData.height) || formData.height <= 0)) {
-            newErrors.height = "Enter a valid height.";
-        }
-
-        if (formData.weight && (!/^\d+$/.test(formData.weight) || formData.weight <= 0)) {
-            newErrors.weight = "Enter a valid weight.";
-        }
+        ['age', 'height', 'weight'].forEach(field => {
+            if (formData[field] && (!/^\d+$/.test(formData[field]) || Number(formData[field]) <= 0)) {
+                newErrors[field] = `Enter a valid ${field}.`;
+            }
+        });
 
         return newErrors;
     };
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors); // Set errors if validation fails
+            setErrors(validationErrors);
             return;
         }
 
         try {
-            const response = await axios.post(`${API_URL}/editIncomingItem`, formData);
-            console.log(response.data.message);
+            await axios.post(`${API_URL}/editIncomingItem`, { formData, id });
             navigate('/incoming');
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -140,19 +111,14 @@ const EditIncomingPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 p-8">
-
-            <div className="mb-1">
-                <button onClick={handleBackClick} className="flex items-center text-blue-500 hover:text-blue-700">
-                    <FaArrowLeft className="mr-2" /> Back
-                </button>
-            </div>
+            <button onClick={() => navigate('/incoming')} className="flex items-center text-blue-500 hover:text-blue-700 mb-1">
+                <FaArrowLeft className="mr-2" /> Back
+            </button>
 
             <form className="max-w-4xl mx-auto p-6 bg-gray-800 shadow-lg rounded-lg text-white" onSubmit={handleSubmit}>
                 <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Incoming Data</h1>
-                <input type="hidden" name="itemId" value={id} />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Source Dropdown */}
                     {dropdowns[1] && (
                         <FormSelectIncoming
                             label="Source"
@@ -160,7 +126,7 @@ const EditIncomingPage = () => {
                             dropdown={dropdowns[1]}
                             value={formData.source}
                             onChange={handleChange}
-                            error={errors.source} // Show error if exists
+                            error={errors.source}
                         />
                     )}
 
@@ -183,7 +149,7 @@ const EditIncomingPage = () => {
                     />
                     <FormInputIncoming
                         label="CM Phone"
-                        type="text"
+                        type="number"
                         name="cmphone"
                         value={formData.cmphone}
                         onChange={handleChange}
@@ -191,7 +157,7 @@ const EditIncomingPage = () => {
                     />
                     <FormInputIncoming
                         label="CM Alternate Number"
-                        type="text"
+                        type="number"
                         name="cmPhoneAlternateNumber"
                         value={formData.cmPhoneAlternateNumber}
                         onChange={handleChange}
@@ -303,7 +269,6 @@ const EditIncomingPage = () => {
                     />
                 </div>
 
-                {/* Error Messages */}
                 {Object.keys(errors).length > 0 && (
                     <div className="mt-4 text-red-500">
                         {Object.values(errors).map((error, index) => (
@@ -320,4 +285,4 @@ const EditIncomingPage = () => {
     );
 }
 
-export default EditIncomingPage
+export default EditIncomingPage;

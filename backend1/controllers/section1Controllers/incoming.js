@@ -168,45 +168,46 @@ exports.postEditIncomingItem = async (req, res) => {
     const commonFields = {
         source: {
             dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.source),
-            value: req.body.source,
+            value: req.body.formData.source,
         },
-        CM_First_Name: req.body.cmFirstName,
-        CM_Last_Name: req.body.cmLastName,
-        CM_Phone: req.body.cmphone,
-        alternate_Phone: req.body.cmPhoneAlternateNumber,
+        CM_First_Name: req.body.formData.cmFirstName,
+        CM_Last_Name: req.body.formData.cmLastName,
+        CM_Phone: req.body.formData.cmphone,
+        alternate_Phone: req.body.formData.cmPhoneAlternateNumber,
         agent_name: {
             dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.agent_name),
-            value: req.body.agent_name,
+            value: req.body.formData.agent_name,
         },
         language: {
             dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.language),
-            value: req.body.language,
+            value: req.body.formData.language,
         },
         disease: {
             dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.disease),
-            value: req.body.disease,
+            value: req.body.formData.disease,
         },
-        age: req.body.age,
-        height: req.body.height,
-        weight: req.body.weight,
+        age: req.body.formData.age,
+        height: req.body.formData.height,
+        weight: req.body.formData.weight,
         state: {
             dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.state),
-            value: req.body.state,
+            value: req.body.formData.state,
         },
-        city: req.body.city,
+        city: req.body.formData.city,
         remark: {
             dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.remark),
-            value: req.body.remark,
+            value: req.body.formData.remark,
         },
-        comment: req.body.comment,
+        comment: req.body.formData.comment,
     };
 
-    const dataId = req.body
-    console.log(dataId);
+    const dataId = req.body.id
+    console.log(req.body);
 
     try {
         // Find and update the Lead
         const incomingItem = await Incoming.findById(dataId);
+        // console.log(commonFields)
 
         if (!incomingItem) {
             throw new Error('Incoming item not found');
@@ -216,7 +217,7 @@ exports.postEditIncomingItem = async (req, res) => {
         incomingItem.CM_First_Name = commonFields.CM_First_Name;
         incomingItem.CM_Last_Name = commonFields.CM_Last_Name;
         incomingItem.CM_Phone = commonFields.CM_Phone;
-        incomingItem.alternative_Number = commonFields.alternative_Number;
+        incomingItem.alternate_Phone = commonFields.alternate_Phone;
         incomingItem.agent_name = commonFields.agent_name;
         incomingItem.language = commonFields.language;
         incomingItem.disease = commonFields.disease;
