@@ -15,4 +15,6 @@ router.post('/deleteIncomingItem', incomingController.deleteIncomingItem)
 
 router.get('/editIncomingItem/:id', incomingController.getEditIncomingItem)
 
+router.post('/editIncomingItem', incomingController.postEditIncomingItem)
+
 module.exports = router;

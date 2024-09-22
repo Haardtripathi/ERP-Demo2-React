@@ -42,7 +42,7 @@ const incomingSchema = new Schema(
       required: true,
     },
     CM_Phone: {
-      type: String,
+      type: Number,
       required: true,
     },
     alternate_Phone: {

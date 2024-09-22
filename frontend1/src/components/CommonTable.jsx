@@ -4,7 +4,7 @@ import CommonRow from './CommonRow';
 const Table = ({ data, setData }) => {
     return (
         <div className="overflow-x-auto w-full">
-            <div className="overflow-y-auto max-h-[700px]">
+            <div className="overflow-y-auto max-h-[650px]">
                 <table className="min-w-full bg-white border border-gray-300 text-lg">
                     <thead className="sticky top-0 bg-gray-800 text-white">
                         <tr className="text-l">

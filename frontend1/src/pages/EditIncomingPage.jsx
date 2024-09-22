@@ -10,25 +10,63 @@ const EditIncomingPage = () => {
     const { id } = useParams();
     const [dropdowns, setDropdowns] = useState([]);
     const [formData, setFormData] = useState({
+        source: '', // or null if that's preferable
+        cmFirstName: '',
+        cmLastName: '',
+        cmphone: '',
+        cmPhoneAlternateNumber: '',
+        agent_name: '',
+        language: '',
+        disease: '',
+        age: '',
+        height: '',
+        weight: '',
+        state: '',
+        city: '',
+        remark: '',
+        comment: '',
     });
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const API_URL = "http://localhost:5000";
 
+
     useEffect(() => {
         const fetchDropdownsAndPrevData = async () => {
             try {
                 const response = await axios.get(`${API_URL}/editIncomingItem/${id}`);
-                // console.log(response);
-                setDropdowns(response.data.dropdowns);
-                setFormData(response.data.prevData);
-                console.log(formData)
+                const prevData = response.data.prevData;
+
+                // Extract values from dropdown_data objects in prevData
+                const formattedData = {
+                    source: prevData.source?.value || '',  // Extract the 'value' from nested objects
+                    cmFirstName: prevData.CM_First_Name || '',
+                    cmLastName: prevData.CM_Last_Name || '',
+                    cmphone: prevData.CM_Phone || '',
+                    cmPhoneAlternateNumber: prevData.alternate_Phone || '',
+                    agent_name: prevData.agent_name?.value || '',
+                    language: prevData.language?.value || '',
+                    disease: prevData.disease?.value || '',
+                    age: prevData.age || '',
+                    height: prevData.height || '',
+                    weight: prevData.weight || '',
+                    state: prevData.state?.value || '',
+                    city: prevData.city || '',
+                    remark: prevData.remark?.value || '',
+                    comment: prevData.comment || ''
+                };
+
+                // Set form data with formatted values
+                setFormData(formattedData);
+                setDropdowns(response.data.dropdowns); // Dropdown data remains as is
+
+                console.log(formattedData); // To ensure the data is set correctly
             } catch (error) {
                 console.error('Error fetching dropdown data:', error);
             }
         };
         fetchDropdownsAndPrevData();
-    }, []);
+    }, [id]);
 
     const handleBackClick = () => {
         navigate('/incoming');
@@ -47,19 +85,22 @@ const EditIncomingPage = () => {
         const newErrors = {};
 
         // Check if all fields are filled
-        for (const [key, value] of Object.entries(formData)) {
-            if (!value.trim()) {
-                newErrors[key] = `${key.replace(/([A-Z])/g, ' $1').toUpperCase()} is required.`;
+        for (const field in formData) {
+            if (formData[field] === undefined || formData[field] === null ||
+                (typeof formData[field] === 'string' && formData[field].trim() === '') ||
+                (typeof formData[field] !== 'string' && formData[field] === '')) {
+                newErrors[field] = "This field is required.";
             }
         }
 
         // Additional validations
-        const phoneRegex = /^\d{10}$/;// Indian phone number validation
-        if (formData.cmphone && !formData.cmphone.match(phoneRegex)) {
+        const phoneRegex = /^\d{10}$/; // Indian phone number validation
+
+        if (formData.cmphone && typeof formData.cmphone === 'string' && !formData.cmphone.match(phoneRegex)) {
             newErrors.cmphone = "Enter a valid 10-digit Indian phone number.";
         }
 
-        if (formData.cmPhoneAlternateNumber && !formData.cmPhoneAlternateNumber.match(phoneRegex)) {
+        if (formData.cmPhoneAlternateNumber && typeof formData.cmPhoneAlternateNumber === 'string' && !formData.cmPhoneAlternateNumber.match(phoneRegex)) {
             newErrors.cmPhoneAlternateNumber = "Enter a valid alternate 10-digit Indian phone number.";
         }
 
@@ -78,6 +119,7 @@ const EditIncomingPage = () => {
         return newErrors;
     };
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -88,7 +130,7 @@ const EditIncomingPage = () => {
         }
 
         try {
-            const response = await axios.post(`${API_URL}/addIncomingData`, formData);
+            const response = await axios.post(`${API_URL}/editIncomingItem`, formData);
             console.log(response.data.message);
             navigate('/incoming');
         } catch (error) {
@@ -106,7 +148,8 @@ const EditIncomingPage = () => {
             </div>
 
             <form className="max-w-4xl mx-auto p-6 bg-gray-800 shadow-lg rounded-lg text-white" onSubmit={handleSubmit}>
-                <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Add Incoming Data</h1>
+                <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Incoming Data</h1>
+                <input type="hidden" name="itemId" value={id} />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Source Dropdown */}

@@ -4,9 +4,9 @@ import TableRow from './TableRow';
 const Table = ({ data, setData }) => {
     return (
         <div className="overflow-x-auto w-full">
-            <div className="overflow-y-auto max-h-[700px]">
+            <div className="overflow-y-auto max-h-[650px]">
                 <table className="min-w-full bg-white border border-gray-300 text-lg">
-                    <thead>
+                    <thead className="sticky top-0 bg-gray-800 text-white">
                         <tr className="bg-gray-800 text-white text-l">
                             <th className="py-4 px-6 border-b border-gray-300">Action</th>
                             <th className="py-4 px-6 border-b border-gray-300">Data</th>
