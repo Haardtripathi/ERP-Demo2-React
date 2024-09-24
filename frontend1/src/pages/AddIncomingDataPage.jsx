@@ -56,35 +56,29 @@ const AddIncomingDataPage = () => {
     // Validate form inputs
     const validate = () => {
         const newErrors = {};
+        const requiredFields = ['source', 'cmFirstName', 'cmLastName', 'cmphone', 'agent_name', 'language', 'disease', 'age', 'height', 'weight', 'state', 'city', 'remark', 'comment'];
+        const phoneRegex = /^\d{10}$/; // Validates 10-digit phone number
 
-        // Check if all fields are filled
-        for (const [key, value] of Object.entries(formData)) {
-            if (!value.trim()) {
-                newErrors[key] = `${key.replace(/([A-Z])/g, ' $1').toUpperCase()} is required.`;
+        // Check required fields
+        requiredFields.forEach(field => {
+            if (!formData[field]) newErrors[field] = "This field is required.";
+        });
+
+        // Validate 10-digit phone numbers
+        if (formData.cmphone && !phoneRegex.test(formData.cmphone)) {
+            newErrors.cmphone = "Enter a valid 10-digit phone number.";
+        }
+
+        if (formData.cmPhoneAlternateNumber && !phoneRegex.test(formData.cmPhoneAlternateNumber)) {
+            newErrors.cmPhoneAlternateNumber = "Enter a valid 10-digit alternate phone number.";
+        }
+
+        // Validate numerical fields: age, height, weight
+        ['age', 'height', 'weight'].forEach(field => {
+            if (formData[field] && (!/^\d+$/.test(formData[field]) || Number(formData[field]) <= 0)) {
+                newErrors[field] = `Enter a valid ${field}.`;
             }
-        }
-
-        // Additional validations
-        const phoneRegex = /^\d{10}$/;// Indian phone number validation
-        if (formData.cmphone && !formData.cmphone.match(phoneRegex)) {
-            newErrors.cmphone = "Enter a valid 10-digit Indian phone number.";
-        }
-
-        if (formData.cmPhoneAlternateNumber && !formData.cmPhoneAlternateNumber.match(phoneRegex)) {
-            newErrors.cmPhoneAlternateNumber = "Enter a valid alternate 10-digit Indian phone number.";
-        }
-
-        if (formData.age && (!/^\d+$/.test(formData.age) || formData.age <= 0)) {
-            newErrors.age = "Enter a valid age.";
-        }
-
-        if (formData.height && (!/^\d+$/.test(formData.height) || formData.height <= 0)) {
-            newErrors.height = "Enter a valid height.";
-        }
-
-        if (formData.weight && (!/^\d+$/.test(formData.weight) || formData.weight <= 0)) {
-            newErrors.weight = "Enter a valid weight.";
-        }
+        });
 
         return newErrors;
     };

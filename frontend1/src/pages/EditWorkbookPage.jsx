@@ -7,11 +7,13 @@ import FormSelectIncoming from '../components/FormSelectIncoming';
 
 const API_URL = "http://localhost:5000";
 
-const EditIncomingPage = () => {
+const EditWorkbookPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [dropdowns, setDropdowns] = useState([]);
     const [formData, setFormData] = useState({
+        data: "",
+        data_id: "",
         source: '',
         cmFirstName: '',
         cmLastName: '',
@@ -33,7 +35,7 @@ const EditIncomingPage = () => {
     useEffect(() => {
         const fetchDropdownsAndPrevData = async () => {
             try {
-                const { data } = await axios.get(`${API_URL}/editIncomingItem/${id}`);
+                const { data } = await axios.get(`${API_URL}/editWorkbookItem/${id}`);
                 setDropdowns(data.dropdowns);
                 setFormData(formatPrevData(data.prevData));
             } catch (error) {
@@ -44,6 +46,8 @@ const EditIncomingPage = () => {
     }, [id]);
 
     const formatPrevData = (prevData) => ({
+        data: prevData.data?.value || '',
+        data_id: prevData.dataId || '',
         source: prevData.source?.value || '',
         cmFirstName: prevData.CM_First_Name || '',
         cmLastName: prevData.CM_Last_Name || '',
@@ -69,24 +73,21 @@ const EditIncomingPage = () => {
 
     const validate = () => {
         const newErrors = {};
-        const requiredFields = ['source', 'cmFirstName', 'cmLastName', 'cmphone', 'agent_name', 'language', 'disease', 'age', 'height', 'weight', 'state', 'city', 'remark', 'comment'];
-        const phoneRegex = /^\d{10}$/; // Validates 10-digit phone number
+        const requiredFields = ['data', 'source', 'cmFirstName', 'cmLastName', 'cmphone', 'agent_name', 'language', 'disease', 'age', 'height', 'weight', 'state', 'city', 'remark', 'comment'];
+        const phoneRegex = /^\d{10}$/;
 
-        // Check required fields
         requiredFields.forEach(field => {
             if (!formData[field]) newErrors[field] = "This field is required.";
         });
 
-        // Validate 10-digit phone numbers
         if (formData.cmphone && !phoneRegex.test(formData.cmphone)) {
-            newErrors.cmphone = "Enter a valid 10-digit phone number.";
+            newErrors.cmphone = "Enter a valid 10-digit Indian phone number.";
         }
 
         if (formData.cmPhoneAlternateNumber && !phoneRegex.test(formData.cmPhoneAlternateNumber)) {
-            newErrors.cmPhoneAlternateNumber = "Enter a valid 10-digit alternate phone number.";
+            newErrors.cmPhoneAlternateNumber = "Enter a valid alternate 10-digit Indian phone number.";
         }
 
-        // Validate numerical fields: age, height, weight
         ['age', 'height', 'weight'].forEach(field => {
             if (formData[field] && (!/^\d+$/.test(formData[field]) || Number(formData[field]) <= 0)) {
                 newErrors[field] = `Enter a valid ${field}.`;
@@ -103,11 +104,10 @@ const EditIncomingPage = () => {
             setErrors(validationErrors);
             return;
         }
-        console.log(formData)
 
         try {
-            await axios.post(`${API_URL}/editLeadItem`, { formData, id });
-            navigate('/incoming');
+            await axios.post(`${API_URL}/editWorkbookItem`, { formData, id });
+            navigate('/workbook');
         } catch (error) {
             console.error('Error submitting form:', error);
         }
@@ -115,14 +115,26 @@ const EditIncomingPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 p-8">
-            <button onClick={() => navigate('/incoming')} className="flex items-center text-blue-500 hover:text-blue-700 mb-1">
+            <button onClick={() => navigate('/workbook')} className="flex items-center text-blue-500 hover:text-blue-700 mb-1">
                 <FaArrowLeft className="mr-2" /> Back
             </button>
 
             <form className="max-w-4xl mx-auto p-6 bg-gray-800 shadow-lg rounded-lg text-white" onSubmit={handleSubmit}>
-                <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Incoming Data</h1>
+                <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Workbook Data</h1>
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {dropdowns[0] && (
+                        <FormSelectIncoming
+                            label="Data"
+                            name="data"
+                            dropdown={dropdowns[0]}
+                            value={formData.data}
+                            onChange={handleChange}
+                            error={errors.data}
+                        />
+                    )}
+
                     {dropdowns[1] && (
                         <FormSelectIncoming
                             label="Source"
@@ -281,4 +293,4 @@ const EditIncomingPage = () => {
     );
 }
 
-export default EditIncomingPage;
+export default EditWorkbookPage

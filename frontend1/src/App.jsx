@@ -8,6 +8,8 @@ import LeadPage from './pages/LeadPage';
 import AddIncomingDataPage from './pages/AddIncomingDataPage'; // Import the new page
 import LeadUploadPage from './pages/LeadUploadPage';
 import EditIncomingPage from './pages/EditIncomingPage';
+import EditLeadPage from './pages/EditLeadPage';
+import EditWorkbookPage from './pages/EditWorkbookPage';
 
 function App() {
   return (
@@ -25,7 +27,8 @@ function App() {
         <Route path="/addIncomingData" element={<AddIncomingDataPage />} />
         <Route path="/addLeadData" element={<LeadUploadPage />} />
         <Route path="/editIncomingItem/:id" element={<EditIncomingPage />} />
-        {/* <Route path="/editIncomingItem/:id" element={<EditIncomingItem />} /> */}
+        <Route path="/editLeadItem/:id" element={<EditLeadPage />} />
+        <Route path="/editWorkbookItem/:id" element={<EditWorkbookPage />} />
       </Routes>
     </Router>
   );

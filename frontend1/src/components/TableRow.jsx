@@ -1,8 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 
 const TableRow = ({ rowData, setData }) => {
     const API_URL = "http://localhost:5000";
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handleDelete = async (event) => {
         event.preventDefault();
@@ -22,9 +26,20 @@ const TableRow = ({ rowData, setData }) => {
             console.error("Error deleting item:", error);
         }
     };
+    const getEdit = (event) => {
+        event.preventDefault();
+        let endpoint = `/editWorkbookItem/${rowData._id}`;
+        console.log(endpoint);
+
+        navigate(endpoint);
+    };
     return (
         <tr className="hover:bg-gray-100 text-sm">
-
+            <td className="py-2 px-4 border-b border-gray-300">
+                <form onSubmit={getEdit}>
+                    <button className="bg-blue-500 text-white py-1 px-2 rounded" type="submit">Edit</button>
+                </form>
+            </td>
             <td className="py-2 px-4 border-b border-gray-300">ONe</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.data.value}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.date}</td>

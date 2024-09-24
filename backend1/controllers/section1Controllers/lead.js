@@ -125,8 +125,152 @@ exports.addLeadItem = async (req, res) => {
     }
 };
 
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 exports.getEditLeadItem = async (req, res) => {
     const itemId = req.params.id;
-    console.log(itemId);
+    try {
+        const data = await Dropdown.find();
+
+        const formattedData = data.map((item) => ({
+            name: item.name,
+            values: item.values,
+        }));
+        const leadData = await Lead.findById(itemId);
+        // console.log(formattedData, incomingData);
+
+        res.json({ dropdowns: formattedData, prevData: leadData }); // Send as JSON response
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+exports.postEditLeadItem = async (req, res) => {
+    const newdate = () => {
+        const options = {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        };
+        const formatter = new Intl.DateTimeFormat([], options);
+        return formatter.format(new Date());
+    }
+    const staticDropdownData = {
+        source: "669258512f5aaf7d9cb3cd56",
+        agent_name: "6692586f2f5aaf7d9cb3cd58",
+        language: "669258992f5aaf7d9cb3cd5a",
+        disease: "669258db2f5aaf7d9cb3cd5c",
+        state: "6692594c2f5aaf7d9cb3cd5e",
+        remark: "669259862f5aaf7d9cb3cd60",
+    };
+    const commonFields = {
+        date: newdate(),
+        source: {
+            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.source),
+            value: req.body.formData.source,
+        },
+        CM_First_Name: req.body.formData.cmFirstName,
+        CM_Last_Name: req.body.formData.cmLastName,
+        CM_Phone: req.body.formData.cmphone,
+        alternate_Phone: req.body.formData.cmPhoneAlternateNumber,
+        agent_name: {
+            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.agent_name),
+            value: req.body.formData.agent_name,
+        },
+        language: {
+            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.language),
+            value: req.body.formData.language,
+        },
+        disease: {
+            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.disease),
+            value: req.body.formData.disease,
+        },
+        age: req.body.formData.age,
+        height: req.body.formData.height,
+        weight: req.body.formData.weight,
+        state: {
+            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.state),
+            value: req.body.formData.state,
+        },
+        city: req.body.formData.city,
+        remark: {
+            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.remark),
+            value: req.body.formData.remark,
+        },
+        comment: req.body.formData.comment,
+    };
+
+    const dataId = req.body.id
+    // console.log(req.body);
+    // console.log(commonFields)
+
+    try {
+        // Find and update the Lead
+        const leadItem = await Lead.findById(dataId);
+        // console.log(commonFields)
+
+        if (!leadItem) {
+            throw new Error('Lead item not found');
+        }
+
+        leadItem.source = commonFields.source;
+        leadItem.date = commonFields.date;
+        leadItem.CM_First_Name = commonFields.CM_First_Name;
+        leadItem.CM_Last_Name = commonFields.CM_Last_Name;
+        leadItem.CM_Phone = commonFields.CM_Phone;
+        leadItem.alternate_Phone = commonFields.alternate_Phone;
+        leadItem.agent_name = commonFields.agent_name;
+        leadItem.language = commonFields.language;
+        leadItem.disease = commonFields.disease;
+        leadItem.age = commonFields.age;
+        leadItem.height = commonFields.height;
+        leadItem.weight = commonFields.weight;
+        leadItem.state = commonFields.state;
+        leadItem.city = commonFields.city;
+        leadItem.remark = commonFields.remark;
+        leadItem.comment = commonFields.comment;
+
+        await leadItem.save();
+
+        // Find and update the Workbook
+        const workbookItem = await Workbook.findOne({ dataId: dataId });
+
+        if (!workbookItem) {
+            throw new Error('Workbook item not found');
+        }
+
+        workbookItem.source = commonFields.source;
+        workbookItem.date = commonFields.date;
+        workbookItem.CM_First_Name = commonFields.CM_First_Name;
+        workbookItem.CM_Last_Name = commonFields.CM_Last_Name;
+        workbookItem.CM_Phone = commonFields.CM_Phone;
+        workbookItem.alternative_Number = commonFields.alternative_Number;
+        workbookItem.agent_name = commonFields.agent_name;
+        workbookItem.language = commonFields.language;
+        workbookItem.disease = commonFields.disease;
+        workbookItem.age = commonFields.age;
+        workbookItem.height = commonFields.height;
+        workbookItem.weight = commonFields.weight;
+        workbookItem.state = commonFields.state;
+        workbookItem.city = commonFields.city;
+        workbookItem.remark = commonFields.remark;
+        workbookItem.comment = commonFields.comment;
+
+        await workbookItem.save();
+        res.status(200).json({ message: 'Data updated successfully!' });
+        console.log("UPDATED PRODUCT!");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("An error occurred while updating the data.");
+    }
 }

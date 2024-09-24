@@ -34,7 +34,6 @@ const workbookSchema = new Schema(
         const formatter = new Intl.DateTimeFormat([], options);
         return formatter.format(new Date());
       },
-      immutable: true,
     },
     source: {
       type: Object,

@@ -31,7 +31,6 @@ const incomingSchema = new Schema(
         const formatter = new Intl.DateTimeFormat([], options);
         return formatter.format(new Date());
       },
-      immutable: true, // This will prevent the date from being modified
     },
     CM_First_Name: {
       type: String,

@@ -11,7 +11,7 @@ const LeadPage = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${API_URL}/lead`);
-                console.log(response)
+                // console.log(response)
                 setData(response.data);  // Update the data state
             } catch (error) {
                 console.error("Error fetching workbook data:", error);

@@ -157,6 +157,19 @@ exports.getEditIncomingItem = async (req, res) => {
 
 
 exports.postEditIncomingItem = async (req, res) => {
+    const newdate = () => {
+        const options = {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        };
+        const formatter = new Intl.DateTimeFormat([], options);
+        return formatter.format(new Date());
+    }
     const staticDropdownData = {
         source: "669258512f5aaf7d9cb3cd56",
         agent_name: "6692586f2f5aaf7d9cb3cd58",
@@ -202,10 +215,10 @@ exports.postEditIncomingItem = async (req, res) => {
     };
 
     const dataId = req.body.id
-    console.log(req.body);
+    // console.log(req.body);
 
     try {
-        // Find and update the Lead
+        // Find and update the Incoming
         const incomingItem = await Incoming.findById(dataId);
         // console.log(commonFields)
 

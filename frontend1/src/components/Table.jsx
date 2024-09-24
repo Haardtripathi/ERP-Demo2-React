@@ -9,6 +9,7 @@ const Table = ({ data, setData }) => {
                     <thead className="sticky top-0 bg-gray-800 text-white">
                         <tr className="bg-gray-800 text-white text-l">
                             <th className="py-4 px-6 border-b border-gray-300">Action</th>
+                            <th className="py-4 px-6 border-b border-gray-300">Edit</th>
                             <th className="py-4 px-6 border-b border-gray-300">Data</th>
                             <th className="py-4 px-6 border-b border-gray-300">Date</th>
                             <th className="py-4 px-6 border-b border-gray-300">Source</th>

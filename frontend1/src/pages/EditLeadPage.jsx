@@ -7,7 +7,7 @@ import FormSelectIncoming from '../components/FormSelectIncoming';
 
 const API_URL = "http://localhost:5000";
 
-const EditIncomingPage = () => {
+const EditLeadPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [dropdowns, setDropdowns] = useState([]);
@@ -33,7 +33,7 @@ const EditIncomingPage = () => {
     useEffect(() => {
         const fetchDropdownsAndPrevData = async () => {
             try {
-                const { data } = await axios.get(`${API_URL}/editIncomingItem/${id}`);
+                const { data } = await axios.get(`${API_URL}/editLeadItem/${id}`);
                 setDropdowns(data.dropdowns);
                 setFormData(formatPrevData(data.prevData));
             } catch (error) {
@@ -70,23 +70,20 @@ const EditIncomingPage = () => {
     const validate = () => {
         const newErrors = {};
         const requiredFields = ['source', 'cmFirstName', 'cmLastName', 'cmphone', 'agent_name', 'language', 'disease', 'age', 'height', 'weight', 'state', 'city', 'remark', 'comment'];
-        const phoneRegex = /^\d{10}$/; // Validates 10-digit phone number
+        const phoneRegex = /^\d{10}$/;
 
-        // Check required fields
         requiredFields.forEach(field => {
             if (!formData[field]) newErrors[field] = "This field is required.";
         });
 
-        // Validate 10-digit phone numbers
         if (formData.cmphone && !phoneRegex.test(formData.cmphone)) {
-            newErrors.cmphone = "Enter a valid 10-digit phone number.";
+            newErrors.cmphone = "Enter a valid 10-digit Indian phone number.";
         }
 
         if (formData.cmPhoneAlternateNumber && !phoneRegex.test(formData.cmPhoneAlternateNumber)) {
-            newErrors.cmPhoneAlternateNumber = "Enter a valid 10-digit alternate phone number.";
+            newErrors.cmPhoneAlternateNumber = "Enter a valid alternate 10-digit Indian phone number.";
         }
 
-        // Validate numerical fields: age, height, weight
         ['age', 'height', 'weight'].forEach(field => {
             if (formData[field] && (!/^\d+$/.test(formData[field]) || Number(formData[field]) <= 0)) {
                 newErrors[field] = `Enter a valid ${field}.`;
@@ -103,11 +100,10 @@ const EditIncomingPage = () => {
             setErrors(validationErrors);
             return;
         }
-        console.log(formData)
 
         try {
             await axios.post(`${API_URL}/editLeadItem`, { formData, id });
-            navigate('/incoming');
+            navigate('/lead');
         } catch (error) {
             console.error('Error submitting form:', error);
         }
@@ -115,7 +111,7 @@ const EditIncomingPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 p-8">
-            <button onClick={() => navigate('/incoming')} className="flex items-center text-blue-500 hover:text-blue-700 mb-1">
+            <button onClick={() => navigate('/lead')} className="flex items-center text-blue-500 hover:text-blue-700 mb-1">
                 <FaArrowLeft className="mr-2" /> Back
             </button>
 
@@ -281,4 +277,4 @@ const EditIncomingPage = () => {
     );
 }
 
-export default EditIncomingPage;
+export default EditLeadPage

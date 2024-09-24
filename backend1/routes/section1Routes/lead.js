@@ -8,5 +8,6 @@ router.get('/lead', leadController.getLeadData);
 router.post('/deleteLeadItem', leadController.deleteLeadItem);
 router.post("/addLeadItem", upload.single('csvFile'), leadController.addLeadItem);
 router.get("/editLeadItem/:id", leadController.getEditLeadItem)
+router.post("/editLeadItem", leadController.postEditLeadItem)
 
 module.exports = router;
