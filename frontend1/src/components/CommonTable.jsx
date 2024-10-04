@@ -29,6 +29,7 @@ const Table = ({ data, setData }) => {
                         </tr>
                     </thead>
                     <tbody>
+
                         {data.map((rowData) => (
                             <CommonRow key={rowData._id} rowData={rowData} setData={setData} />
                         ))}

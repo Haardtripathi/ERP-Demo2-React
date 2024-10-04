@@ -1,7 +1,7 @@
 import React from 'react';
 import TableRow from './TableRow';
 
-const Table = ({ data, setData }) => {
+const Table = ({ data, setData, setErrorMessage }) => {
     return (
         <div className="overflow-x-auto w-full">
             <div className="overflow-y-auto max-h-[650px]">
@@ -32,7 +32,7 @@ const Table = ({ data, setData }) => {
                     </thead>
                     <tbody>
                         {data.map((rowData) => (
-                            <TableRow key={rowData._id} rowData={rowData} setData={setData} />
+                            <TableRow key={rowData._id} rowData={rowData} setData={setData} setErrorMessage={setErrorMessage} />
                         ))}
                     </tbody>
                 </table>

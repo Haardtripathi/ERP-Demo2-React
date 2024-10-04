@@ -116,7 +116,7 @@ const EditLeadPage = () => {
             </button>
 
             <form className="max-w-4xl mx-auto p-6 bg-gray-800 shadow-lg rounded-lg text-white" onSubmit={handleSubmit}>
-                <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Incoming Data</h1>
+                <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Lead Data</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {dropdowns[1] && (

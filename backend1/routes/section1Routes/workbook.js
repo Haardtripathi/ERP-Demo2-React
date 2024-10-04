@@ -14,9 +14,10 @@ router.get("/workbook", workbookController.getWorkbook);
 // router.post('/shiftToPending', workbookController.shiftToPending); // Adjust as needed
 router.post('/deleteWorkbookItem', workbookController.deleteWorkbookItem);
 
-router.get('/editWorkbookItem/:id', workbookController.getEditWorkbookItem);
+// router.get('/editWorkbookItem/:id', workbookController.getEditWorkbookItem);
 
-router.post("/editWorkbookItem", workbookController.postEditWorkbookItem);
+// router.post("/editWorkbookItem", workbookController.postEditWorkbookItem);
 
+router.post('/sendToPending', workbookController.sendToPending);
 
 module.exports = router;

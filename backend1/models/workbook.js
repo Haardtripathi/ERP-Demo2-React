@@ -91,13 +91,13 @@ const workbookSchema = new Schema(
       },
     },
     age: {
-      type: String,
+      type: Number,
     },
     height: {
-      type: String,
+      type: Number,
     },
     weight: {
-      type: String,
+      type: Number,
     },
     state: {
       type: Object,

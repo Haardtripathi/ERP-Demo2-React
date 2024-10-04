@@ -81,15 +81,15 @@ const incomingSchema = new Schema(
       required: true,
     },
     age: {
-      type: String,
+      type: Number,
       required: true,
     },
     height: {
-      type: String,
+      type: Number,
       required: true,
     },
     weight: {
-      type: String,
+      type: Number,
       required: true,
     },
     state: {

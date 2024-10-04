@@ -4,6 +4,7 @@ const Dropdown = require("../../models/dropdowns");
 const Workbook = require("../../models/workbook");
 const Incoming = require("../../models/incoming");
 const Lead = require("../../models/lead");
+const Pending = require("../../models/pending");
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,86 +58,111 @@ exports.deleteWorkbookItem = async (req, res, next) => {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-exports.getEditWorkbookItem = async (req, res) => {
-    console.log("Hello world!");
-    const itemId = req.params.id;
+// exports.getEditWorkbookItem = async (req, res) => {
+//     console.log("Hello world!");
+//     const itemId = req.params.id;
+//     try {
+//         const data = await Dropdown.find();
+
+//         const formattedData = data.map((item) => ({
+//             name: item.name,
+//             values: item.values,
+//         }));
+//         const WorkbookData = await Workbook.findById(itemId);
+//         // console.log(formattedData, incomingData);
+
+//         res.json({ dropdowns: formattedData, prevData: WorkbookData }); // Send as JSON response
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// }
+
+
+exports.sendToPending = async (req, res, next) => {
+    const itemId = req.body.itemId;
+    const dataId = req.body.dataId;
+    const dataValue = req.body.dataValue;
     try {
-        const data = await Dropdown.find();
+        const staticDropdownData = {
+            source: "669258512f5aaf7d9cb3cd56",
+            agent_name: "6692586f2f5aaf7d9cb3cd58",
+            language: "669258992f5aaf7d9cb3cd5a",
+            disease: "669258db2f5aaf7d9cb3cd5c",
+            state: "6692594c2f5aaf7d9cb3cd5e",
+            remark: "669259862f5aaf7d9cb3cd60",
+            payment_type: "66ca09f9efcae9d04adb3610",
+            sale_type: "66ca09c6efcae9d04adb360e",
+            status: "66cd80b921c654779763c616",
+            shipment_type: "66ca0a39efcae9d04adb3612",
+            post_type: "66ca0abfefcae9d04adb3616",
+            disease: "669258db2f5aaf7d9cb3cd5c",
+            amount: "66cb7b392d2b09775bd57dfa",
+            products: "66cb7b9c2d2b09775bd57dfc"
+        };
 
-        const formattedData = data.map((item) => ({
-            name: item.name,
-            values: item.values,
-        }));
-        const WorkbookData = await Workbook.findById(itemId);
-        // console.log(formattedData, incomingData);
+        const data = await Workbook.findOne({ _id: itemId })
+        // console.log(data)
 
-        res.json({ dropdowns: formattedData, prevData: WorkbookData }); // Send as JSON response
-    } catch (err) {
-        console.log(err);
+        const pendingData = new Pending({
+            payment_type: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.payment_type),
+            },
+            sale_type: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.sale_type),
+            },
+            source: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.source),
+                value: data.source.value,
+            },
+            agent_name: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.agent_name),
+                value: data.agent_name.value,
+            },
+            CM_First_Name: data.CM_First_Name,
+            CM_Last_Name: data.CM_Last_Name,
+            CM_Phone: data.CM_Phone,
+            alternate_Phone: data.alternate_Phone,
+            status: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.status),
+            },
+            comment: data.comment,
+            shipment_type: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.shipment_type),
+            },
+            post_type: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.post_type),
+            },
+            City_District: data.city,
+            state: {
+                dropdown_data: data.state.dropdown_data,
+                value: data.state.value,
+            },
+            disease: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.disease),
+                value: data.disease.value,
+            },
+            amount: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.amount),
+            },
+            products: {
+                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.products),
+            },
+        })
+
+        await pendingData.save()
+        // console.log(dataId)
+        const deleteWorkBookData = await Workbook.deleteOne({ _id: itemId });
+        if (dataValue === "Incoming") {
+            await Incoming.deleteOne({ _id: dataId })
+        }
+        else {
+            await Lead.deleteOne({ _id: dataId })
+        }
+        res.json({ success: true, message: "Data successfully sent to pending." });
+    } catch (error) {
+        console.log(error)
         res.status(500).json({ error: "Internal Server Error" });
     }
-}
 
-exports.postEditWorkbookItem = async (req, res, next) => {
-    const newdate = () => {
-        const options = {
-            timeZone: 'Asia/Kolkata',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        };
-        const formatter = new Intl.DateTimeFormat([], options);
-        return formatter.format(new Date());
-    }
-    const staticDropdownData = {
-        source: "669258512f5aaf7d9cb3cd56",
-        agent_name: "6692586f2f5aaf7d9cb3cd58",
-        language: "669258992f5aaf7d9cb3cd5a",
-        disease: "669258db2f5aaf7d9cb3cd5c",
-        state: "6692594c2f5aaf7d9cb3cd5e",
-        remark: "669259862f5aaf7d9cb3cd60",
-    };
-    const commonFields = {
-        date: newdate(),
-        source: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.source),
-            value: req.body.formData.source,
-        },
-        data: req.body.formData.data,
-        dataId: new mongoose.Types.ObjectId(req.body.formData.data_id),
-        CM_First_Name: req.body.formData.cmFirstName,
-        CM_Last_Name: req.body.formData.cmLastName,
-        CM_Phone: req.body.formData.cmphone,
-        alternate_Phone: req.body.formData.cmPhoneAlternateNumber,
-        agent_name: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.agent_name),
-            value: req.body.formData.agent_name,
-        },
-        language: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.language),
-            value: req.body.formData.language,
-        },
-        disease: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.disease),
-            value: req.body.formData.disease,
-        },
-        age: req.body.formData.age,
-        height: req.body.formData.height,
-        weight: req.body.formData.weight,
-        state: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.state),
-            value: req.body.formData.state,
-        },
-        city: req.body.formData.city,
-        remark: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.remark),
-            value: req.body.formData.remark,
-        },
-        comment: req.body.formData.comment,
-    };
-
-    console.log(commonFields)
 }

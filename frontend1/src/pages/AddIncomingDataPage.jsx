@@ -6,7 +6,7 @@ import FormInputIncoming from '../components/FormInputIncoming';
 import FormSelectIncoming from '../components/FormSelectIncoming';
 
 const AddIncomingDataPage = () => {
-    const [dropdowns, setDropdowns] = useState([]);
+    const [dropdowns, setDropdowns] = useState({});
     const [formData, setFormData] = useState({
         cmFirstName: '',
         cmLastName: '',
@@ -18,11 +18,17 @@ const AddIncomingDataPage = () => {
         city: '',
         comment: '',
         source: '',
+        source_id: '',  // Added for source ID
         agent_name: '',
+        agent_id: '',    // Added for agent ID
         language: '',
+        language_id: '',  // Added for language ID
         disease: '',
+        disease_id: '',   // Added for disease ID
         state: '',
+        state_id: '',     // Added for state ID
         remark: '',
+        remark_id: '',    // Added for remark ID
     });
 
     const [errors, setErrors] = useState({});
@@ -47,10 +53,17 @@ const AddIncomingDataPage = () => {
 
     // Handle form input changes
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+            ...(name === 'source' ? { source_id: dropdowns["source"].id } : {}),
+            ...(name === 'agent_name' ? { agent_id: dropdowns["agent name"].id } : {}),
+            ...(name === 'language' ? { language_id: dropdowns["language"].id } : {}),
+            ...(name === 'disease' ? { disease_id: dropdowns["disease"].id } : {}),
+            ...(name === 'state' ? { state_id: dropdowns["state"].id } : {}),
+            ...(name === 'remark' ? { remark_id: dropdowns["remark"].id } : {}),
+        }));
     };
 
     // Validate form inputs
@@ -116,11 +129,11 @@ const AddIncomingDataPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Source Dropdown */}
-                    {dropdowns[1] && (
+                    {dropdowns["source"] && (
                         <FormSelectIncoming
                             label="Source"
                             name="source"
-                            dropdown={dropdowns[1]}
+                            dropdown={dropdowns["source"]}
                             value={formData.source}
                             onChange={handleChange}
                             error={errors.source} // Show error if exists
@@ -146,7 +159,7 @@ const AddIncomingDataPage = () => {
                     />
                     <FormInputIncoming
                         label="CM Phone"
-                        type="text"
+                        type="number"
                         name="cmphone"
                         value={formData.cmphone}
                         onChange={handleChange}
@@ -154,7 +167,7 @@ const AddIncomingDataPage = () => {
                     />
                     <FormInputIncoming
                         label="CM Alternate Number"
-                        type="text"
+                        type="number"
                         name="cmPhoneAlternateNumber"
                         value={formData.cmPhoneAlternateNumber}
                         onChange={handleChange}
@@ -162,11 +175,11 @@ const AddIncomingDataPage = () => {
                     />
 
                     {/* Agent Name Dropdown */}
-                    {dropdowns[2] && (
+                    {dropdowns["agent name"] && (
                         <FormSelectIncoming
                             label="Agent Name"
                             name="agent_name"
-                            dropdown={dropdowns[2]}
+                            dropdown={dropdowns["agent name"]}
                             value={formData.agent_name}
                             onChange={handleChange}
                             error={errors.agent_name} // Show error if exists
@@ -174,11 +187,11 @@ const AddIncomingDataPage = () => {
                     )}
 
                     {/* Language Dropdown */}
-                    {dropdowns[3] && (
+                    {dropdowns["language"] && (
                         <FormSelectIncoming
                             label="Language"
                             name="language"
-                            dropdown={dropdowns[3]}
+                            dropdown={dropdowns["language"]}
                             value={formData.language}
                             onChange={handleChange}
                             error={errors.language} // Show error if exists
@@ -186,11 +199,11 @@ const AddIncomingDataPage = () => {
                     )}
 
                     {/* Disease Dropdown */}
-                    {dropdowns[4] && (
+                    {dropdowns["disease"] && (
                         <FormSelectIncoming
                             label="Disease"
                             name="disease"
-                            dropdown={dropdowns[4]}
+                            dropdown={dropdowns["disease"]}
                             value={formData.disease}
                             onChange={handleChange}
                             error={errors.disease} // Show error if exists
@@ -224,11 +237,11 @@ const AddIncomingDataPage = () => {
                     />
 
                     {/* State Dropdown */}
-                    {dropdowns[5] && (
+                    {dropdowns["state"] && (
                         <FormSelectIncoming
                             label="State"
                             name="state"
-                            dropdown={dropdowns[5]}
+                            dropdown={dropdowns["state"]}
                             value={formData.state}
                             onChange={handleChange}
                             error={errors.state} // Show error if exists
@@ -245,11 +258,11 @@ const AddIncomingDataPage = () => {
                     />
 
                     {/* Remark Dropdown */}
-                    {dropdowns[6] && (
+                    {dropdowns["remark"] && (
                         <FormSelectIncoming
                             label="Remark"
                             name="remark"
-                            dropdown={dropdowns[6]}
+                            dropdown={dropdowns["remark"]}
                             value={formData.remark}
                             onChange={handleChange}
                             error={errors.remark} // Show error if exists
@@ -266,16 +279,7 @@ const AddIncomingDataPage = () => {
                     />
                 </div>
 
-                {/* Error Messages */}
-                {Object.keys(errors).length > 0 && (
-                    <div className="mt-4 text-red-500">
-                        {Object.values(errors).map((error, index) => (
-                            <div key={index}>{error}</div>
-                        ))}
-                    </div>
-                )}
-
-                <button type="submit" className="mt-8 w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg text-lg">
+                <button type="submit" className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Submit
                 </button>
             </form>

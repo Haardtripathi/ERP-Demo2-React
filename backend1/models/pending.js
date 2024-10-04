@@ -60,7 +60,7 @@ const pendingSchema = new Schema(
     CM_Phone: {
       type: Number,
     },
-    Alternate_Number: {
+    alternate_Phone: {
       type: Number,
     },
     email: {

@@ -106,7 +106,7 @@ const EditIncomingPage = () => {
         console.log(formData)
 
         try {
-            await axios.post(`${API_URL}/editLeadItem`, { formData, id });
+            await axios.post(`${API_URL}/editIncomingItem`, { formData, id });
             navigate('/incoming');
         } catch (error) {
             console.error('Error submitting form:', error);

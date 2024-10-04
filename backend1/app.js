@@ -15,7 +15,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 const workbookRoutes = require("./routes/section1Routes/workbook");
 const incomingRoutes = require("./routes/section1Routes/incoming");
 const leadRoutes = require("./routes/section1Routes/lead");
-// const pendingRoutes = require("./routes/section2/pending");
+const pendingRoutes = require("./routes/section2Routes/pending");
 
 const app = express();
 app.use(cors());
@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(workbookRoutes);
 app.use(incomingRoutes);
 app.use(leadRoutes);
-// app.use(pendingRoutes);
+app.use(pendingRoutes);
 
 // Serve React app
 // app.use(express.static(path.join(__dirname, "../client/build")));
