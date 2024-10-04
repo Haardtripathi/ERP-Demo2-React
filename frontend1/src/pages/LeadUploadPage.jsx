@@ -33,6 +33,7 @@ const LeadUploadPage = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+            console.log(formData);
 
             if (response.status === 200) {
                 alert('File uploaded successfully!');

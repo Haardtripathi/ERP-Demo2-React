@@ -14,6 +14,7 @@ const WorkbookPage = () => {
                 setData(response.data);  // Update the data state
             } catch (error) {
                 console.error("Error fetching workbook data:", error);
+                setErrorMessage("Failed to load data"); // Set error message if request fails
             }
         };
 
@@ -21,7 +22,7 @@ const WorkbookPage = () => {
     }, []); // Empty dependency array ensures this runs only once when the component mounts
 
     return (
-        <div className="flex-1 bg-gray-100 p-4 overflow-auto">
+        <div className="flex-1 bg-gray-100 p-4 overflow-auto min-h-screen"> {/* Add min-h-screen for better mobile layout */}
             {errorMessage && (
                 <div className="bg-red-200 text-red-800 p-2 mb-4">{errorMessage}</div>
             )}

@@ -35,29 +35,43 @@ const TableRow = ({ rowData, setData, setErrorMessage }) => {
     };
 
     const validateRowData = () => {
-        // Check each required field and convert to string if necessary
+        // Define the fields to check
         const requiredFields = [
-            String(rowData.data.value),
-            String(rowData.date),
-            String(rowData.source.value),
-            String(rowData.CM_First_Name),
-            String(rowData.CM_Last_Name),
-            String(rowData.CM_Phone),
-            String(rowData.agent_name.value),
-            String(rowData.language.value),
-            String(rowData.disease.value),
-            String(rowData.age),
-            String(rowData.height),
-            String(rowData.weight),
-            String(rowData.state.value),
-            String(rowData.city),
+            rowData.data?.value,
+            rowData.date,
+            rowData.source?.value,
+            rowData.CM_First_Name,
+            rowData.CM_Last_Name,
+            rowData.CM_Phone,
+            rowData.agent_name?.value,
+            rowData.language?.value,
+            rowData.disease?.value,
+            rowData.age,
+            rowData.height,
+            rowData.weight,
+            rowData.state?.value,
+            rowData.city,
         ];
-        // console.log(requiredFields)
-        return requiredFields.every(field => field.trim() !== "");
+
+        // Loop over each field and check for validity
+        return requiredFields.every(field => {
+            // Handle string fields
+            if (typeof field === 'string') {
+                return field.trim() !== "";
+            }
+            // Handle numbers (age, height, weight)
+            if (typeof field === 'number') {
+                return !isNaN(field) && field > 0;
+            }
+            // If field is undefined, null, or empty
+            return !!field; // This checks for any falsy values like undefined, null, 0
+        });
     };
+
     const sendToPending = async (event) => {
         event.preventDefault();
         const isValid = validateRowData();
+        console.log(isValid)
         if (!isValid) {
             setErrorMessage("Please fill in all required fields before sending.");
             return;
@@ -68,6 +82,7 @@ const TableRow = ({ rowData, setData, setErrorMessage }) => {
                 dataId: rowData.dataId,
                 dataValue: rowData.data.value
             });
+            alert("SENT TO PENDING");
             console.log(response);
             navigate("/pending");
         } catch (error) {

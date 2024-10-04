@@ -6,7 +6,7 @@ const Section2Row = ({ rowData, setData, isPendingPage }) => {
     const API_URL = "http://localhost:5000";
     const location = useLocation();
     const navigate = useNavigate();
-    console.log(rowData);
+    // console.log(rowData);
 
     return (
         <tr className="hover:bg-gray-100 text-sm">

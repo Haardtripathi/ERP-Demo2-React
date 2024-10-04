@@ -30,7 +30,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Navbar Links */}
-                <div className={`lg:flex items-center space-x-6 ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
+                <div className={`lg:flex items-center space-x-6 ${isMobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
                     <Link className="text-white hover:text-gray-400 transition-colors" to="/">Home</Link>
                     <Link className="text-white hover:text-gray-400 transition-colors" to="#">Link</Link>
 

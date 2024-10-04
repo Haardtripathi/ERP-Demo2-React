@@ -69,10 +69,33 @@ exports.getAddIncomingData = async (req, res, next) => {
 };
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+// Helper function to check if a value is a valid ObjectId
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 exports.postAddIncomingData = async (req, res, next) => {
     try {
-        // console.log(req.body)
+        // console.log(req.body);
+
+        // Validate ObjectIds before converting
+        if (!isValidObjectId(req.body.source_id)) {
+            return res.status(400).json({ message: 'Invalid source ID' });
+        }
+        if (!isValidObjectId(req.body.agent_id)) {
+            return res.status(400).json({ message: 'Invalid agent ID' });
+        }
+        if (!isValidObjectId(req.body.language_id)) {
+            return res.status(400).json({ message: 'Invalid language ID' });
+        }
+        if (!isValidObjectId(req.body.disease_id)) {
+            return res.status(400).json({ message: 'Invalid disease ID' });
+        }
+        if (!isValidObjectId(req.body.state_id)) {
+            return res.status(400).json({ message: 'Invalid state ID' });
+        }
+        if (!isValidObjectId(req.body.remark_id)) {
+            return res.status(400).json({ message: 'Invalid remark ID' });
+        }
+
         const commonFields = {
             source: {
                 dropdown_data: new mongoose.Types.ObjectId(req.body.source_id),
@@ -103,7 +126,7 @@ exports.postAddIncomingData = async (req, res, next) => {
             },
             city: req.body.city,
             remark: {
-                dropdown_data: new mongoose.Types.ObjectId(req.body.remark),
+                dropdown_data: new mongoose.Types.ObjectId(req.body.remark_id),
                 value: req.body.remark,
             },
             comment: req.body.comment,
@@ -117,7 +140,7 @@ exports.postAddIncomingData = async (req, res, next) => {
         // Create workbook data
         const workbookData = new Workbook({
             data: {
-                dropdown_data: new mongoose.Types.ObjectId(req.body.data_dd_id),
+                dropdown_data: new mongoose.Types.ObjectId(req.body.data_dd_id), // Ensure you have this in req.body
                 value: "Incoming",
             },
             dataId: savedIncomingData._id,
@@ -132,6 +155,7 @@ exports.postAddIncomingData = async (req, res, next) => {
         res.status(500).json({ message: 'Error saving data', error });
     }
 };
+
 
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -161,19 +185,19 @@ exports.getEditIncomingItem = async (req, res) => {
 
 
 exports.postEditIncomingItem = async (req, res) => {
-    const newdate = () => {
-        const options = {
-            timeZone: 'Asia/Kolkata',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        };
-        const formatter = new Intl.DateTimeFormat([], options);
-        return formatter.format(new Date());
-    }
+    // const newdate = () => {
+    //     const options = {
+    //         timeZone: 'Asia/Kolkata',
+    //         year: 'numeric',
+    //         month: '2-digit',
+    //         day: '2-digit',
+    //         hour: '2-digit',
+    //         minute: '2-digit',
+    //         second: '2-digit',
+    //     };
+    //     const formatter = new Intl.DateTimeFormat([], options);
+    //     return formatter.format(new Date());
+    // }
     const commonFields = {
         source: {
             value: req.body.formData.source,

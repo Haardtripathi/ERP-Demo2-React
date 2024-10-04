@@ -53,10 +53,14 @@ const AddIncomingDataPage = () => {
 
     // Handle form input changes
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target;
+
+        // Check if the input type is 'number' and convert the value accordingly
+        const updatedValue = type === 'number' ? (value === '' ? '' : parseFloat(value)) : value;
+        // console.log(updatedValue)
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: updatedValue,
             ...(name === 'source' ? { source_id: dropdowns["source"].id } : {}),
             ...(name === 'agent_name' ? { agent_id: dropdowns["agent name"].id } : {}),
             ...(name === 'language' ? { language_id: dropdowns["language"].id } : {}),
@@ -107,8 +111,9 @@ const AddIncomingDataPage = () => {
         }
 
         try {
+            console.log(formData)
             const response = await axios.post(`${API_URL}/addIncomingData`, formData);
-            console.log(response.data.message);
+            // console.log(response.data.message);
             navigate('/incoming');
         } catch (error) {
             console.error('Error submitting form:', error);
