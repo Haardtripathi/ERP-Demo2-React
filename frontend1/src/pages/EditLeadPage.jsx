@@ -119,14 +119,14 @@ const EditLeadPage = () => {
                 <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Lead Data</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {dropdowns[1] && (
+                    {dropdowns["source"] && (
                         <FormSelectIncoming
                             label="Source"
                             name="source"
-                            dropdown={dropdowns[1]}
+                            dropdown={dropdowns["source"]}
                             value={formData.source}
                             onChange={handleChange}
-                            error={errors.source}
+                            error={errors.source} // Show error if exists
                         />
                     )}
 
@@ -165,11 +165,11 @@ const EditLeadPage = () => {
                     />
 
                     {/* Agent Name Dropdown */}
-                    {dropdowns[2] && (
+                    {dropdowns["agent name"] && (
                         <FormSelectIncoming
                             label="Agent Name"
                             name="agent_name"
-                            dropdown={dropdowns[2]}
+                            dropdown={dropdowns["agent name"]}
                             value={formData.agent_name}
                             onChange={handleChange}
                             error={errors.agent_name} // Show error if exists
@@ -177,11 +177,11 @@ const EditLeadPage = () => {
                     )}
 
                     {/* Language Dropdown */}
-                    {dropdowns[3] && (
+                    {dropdowns["language"] && (
                         <FormSelectIncoming
                             label="Language"
                             name="language"
-                            dropdown={dropdowns[3]}
+                            dropdown={dropdowns["language"]}
                             value={formData.language}
                             onChange={handleChange}
                             error={errors.language} // Show error if exists
@@ -189,11 +189,11 @@ const EditLeadPage = () => {
                     )}
 
                     {/* Disease Dropdown */}
-                    {dropdowns[4] && (
+                    {dropdowns["disease"] && (
                         <FormSelectIncoming
                             label="Disease"
                             name="disease"
-                            dropdown={dropdowns[4]}
+                            dropdown={dropdowns["disease"]}
                             value={formData.disease}
                             onChange={handleChange}
                             error={errors.disease} // Show error if exists
@@ -227,11 +227,11 @@ const EditLeadPage = () => {
                     />
 
                     {/* State Dropdown */}
-                    {dropdowns[5] && (
+                    {dropdowns["state"] && (
                         <FormSelectIncoming
                             label="State"
                             name="state"
-                            dropdown={dropdowns[5]}
+                            dropdown={dropdowns["state"]}
                             value={formData.state}
                             onChange={handleChange}
                             error={errors.state} // Show error if exists
@@ -248,11 +248,11 @@ const EditLeadPage = () => {
                     />
 
                     {/* Remark Dropdown */}
-                    {dropdowns[6] && (
+                    {dropdowns["remark"] && (
                         <FormSelectIncoming
                             label="Remark"
                             name="remark"
-                            dropdown={dropdowns[6]}
+                            dropdown={dropdowns["remark"]}
                             value={formData.remark}
                             onChange={handleChange}
                             error={errors.remark} // Show error if exists

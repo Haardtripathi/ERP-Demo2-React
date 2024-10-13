@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const TableRow = ({ rowData, setData, setErrorMessage }) => {
+const TableRow = ({ rowData, setData, setErrorMessage, hideSendButton }) => {
     const API_URL = "http://localhost:5000";
     const location = useLocation();
     const navigate = useNavigate();
@@ -71,7 +71,6 @@ const TableRow = ({ rowData, setData, setErrorMessage }) => {
     const sendToPending = async (event) => {
         event.preventDefault();
         const isValid = validateRowData();
-        console.log(isValid)
         if (!isValid) {
             setErrorMessage("Please fill in all required fields before sending.");
             return;
@@ -90,14 +89,22 @@ const TableRow = ({ rowData, setData, setErrorMessage }) => {
         }
     };
 
+    const renderSendButton = () => {
+        if (hideSendButton && hideSendButton(rowData)) {
+            return null;
+        }
+        return (
+            <form onSubmit={sendToPending}>
+                <button className="bg-blue-500 text-white py-1 px-2 rounded" type="submit">Send</button>
+            </form>
+        );
+    };
+
     return (
         <tr className="hover:bg-gray-100 text-sm">
             <td className="py-2 px-4 border-b border-gray-300">
-                <form onSubmit={sendToPending}>
-                    <button className="bg-blue-500 text-white py-1 px-2 rounded" type="submit">Send</button>
-                </form>
+                {renderSendButton()}
             </td>
-
             <td className="py-2 px-4 border-b border-gray-300">
                 <form onSubmit={getEdit}>
                     <button className="bg-blue-500 text-white py-1 px-2 rounded" type="submit">Edit</button>
