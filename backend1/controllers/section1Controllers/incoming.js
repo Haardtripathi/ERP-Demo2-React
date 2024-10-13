@@ -74,7 +74,7 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 exports.postAddIncomingData = async (req, res, next) => {
     try {
-        // console.log(req.body);
+        // console.log(req.body);   
 
         // Validate ObjectIds before converting
         if (!isValidObjectId(req.body.source_id)) {
@@ -166,12 +166,18 @@ exports.getEditIncomingItem = async (req, res) => {
     try {
         const data = await Dropdown.find();
 
-        const formattedData = data.map((item) => ({
-            name: item.name,
-            values: item.values,
-        }));
+        const formattedData = data.reduce((acc, item) => {
+            // Ensure the item contains the necessary properties
+            if (item.name && item.values && item._id) {
+                acc[item.name.toLowerCase()] = {
+                    values: item.values,
+                    id: item._id // Assuming `_id` is the key you want to use for IDs
+                };
+            }
+            return acc;
+        }, {});
         const incomingData = await Incoming.findById(itemId);
-        // console.log(formattedData, incomingData);
+        // console.log(formattedData);
 
         res.json({ dropdowns: formattedData, prevData: incomingData }); // Send as JSON response
     } catch (err) {
@@ -269,7 +275,7 @@ exports.postEditIncomingItem = async (req, res) => {
         workbookItem.CM_First_Name = commonFields.CM_First_Name;
         workbookItem.CM_Last_Name = commonFields.CM_Last_Name;
         workbookItem.CM_Phone = commonFields.CM_Phone;
-        workbookItem.alternative_Number = commonFields.alternative_Number;
+        workbookItem.alternative_Phone = commonFields.alternative_Phone;
         workbookItem.agent_name = commonFields.agent_name;
         workbookItem.language = commonFields.language;
         workbookItem.disease = commonFields.disease;

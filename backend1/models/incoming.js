@@ -126,6 +126,10 @@ const incomingSchema = new Schema(
       type: Boolean,
       default: false, // Set default to false (not deleted)
     },
+    isSentToPending: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
       default: 'active', // Set default to 'active'

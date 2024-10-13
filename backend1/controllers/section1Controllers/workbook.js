@@ -152,12 +152,12 @@ exports.sendToPending = async (req, res, next) => {
 
         await pendingData.save()
         // console.log(dataId)
-        const deleteWorkBookData = await Workbook.deleteOne({ _id: itemId });
+        const deleteWorkBookData = await Workbook.updateOne({ _id: itemId }, { isSentToPending: true });
         if (dataValue === "Incoming") {
-            await Incoming.deleteOne({ _id: dataId })
+            await Incoming.updateOne({ _id: dataId }, { isSentToPending: true })
         }
         else {
-            await Lead.deleteOne({ _id: dataId })
+            await Lead.updateOne({ _id: dataId }, { isSentToPending: true })
         }
         res.json({ success: true, message: "Data successfully sent to pending." });
     } catch (error) {

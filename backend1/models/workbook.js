@@ -129,6 +129,10 @@ const workbookSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isSentToPending: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
       default: 'active',

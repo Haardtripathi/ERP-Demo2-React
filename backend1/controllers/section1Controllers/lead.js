@@ -11,6 +11,8 @@ const path = require('path')
 
 exports.getLeadData = async (req, res) => {
     try {
+
+
         const data = await Lead.find({ isDeleted: false });
         // console.log(data); // Add this line
         res.json(data);
@@ -43,14 +45,19 @@ exports.deleteLeadItem = async (req, res, next) => {
 
 
 exports.addLeadItem = async (req, res) => {
-    const staticDropdownData = {
-        source: "669258512f5aaf7d9cb3cd56",
-        agent_name: "6692586f2f5aaf7d9cb3cd58",
-        language: "669258992f5aaf7d9cb3cd5a",
-        disease: "669258db2f5aaf7d9cb3cd5c",
-        state: "6692594c2f5aaf7d9cb3cd5e",
-        remark: "669259862f5aaf7d9cb3cd60",
-    };
+
+    const data = await Dropdown.find();
+    const formattedData = data.reduce((acc, item) => {
+        // Ensure the item contains the necessary properties
+        if (item.name && item.values && item._id) {
+            acc[item.name.toLowerCase()] = {
+                values: item.values,
+                id: item._id // Assuming `_id` is the key you want to use for IDs
+            };
+        }
+        return acc;
+    }, {});
+    // console.log(formattedData["source"].id)
 
     const file = req.file;
     if (!file) {
@@ -63,11 +70,14 @@ exports.addLeadItem = async (req, res) => {
         // Convert the CSV file to JSON
         const jsonArray = await csv().fromFile(filePath);
 
+
+
+
         // Loop through the CSV data and save it to MongoDB
         const savePromises = jsonArray.map(async (item) => {
             const commonFields = {
                 source: {
-                    dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.source),
+                    dropdown_data: formattedData["source"].id,
                     value: item["Source"],
                 },
                 CM_First_Name: item["CM First Name"],
@@ -75,23 +85,23 @@ exports.addLeadItem = async (req, res) => {
                 CM_Phone: item["CM Phone"],
                 alternate_Phone: item["Alternate Number"],
                 agent_name: {
-                    dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.agent_name),
+                    dropdown_data: formattedData["agent name"].id,
                     value: item["Agent Name"],
                 },
                 language: {
-                    dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.language),
+                    dropdown_data: formattedData["language"].id,
                     value: item["Language"],
                 },
                 disease: {
-                    dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.disease),
+                    dropdown_data: formattedData["disease"].id,
                     value: item["Disease"],
                 },
                 state: {
-                    dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.state),
+                    dropdown_data: formattedData["state"].id,
                     value: item["State"],
                 },
                 remark: {
-                    dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.remark),
+                    dropdown_data: formattedData["remark"].id,
                     value: item["Remark"],
                 },
             };
@@ -133,11 +143,18 @@ exports.getEditLeadItem = async (req, res) => {
     const itemId = req.params.id;
     try {
         const data = await Dropdown.find();
+        const formattedData = data.reduce((acc, item) => {
+            // Ensure the item contains the necessary properties
+            if (item.name && item.values && item._id) {
+                acc[item.name.toLowerCase()] = {
+                    values: item.values,
+                    id: item._id // Assuming `_id` is the key you want to use for IDs
+                };
+            }
+            return acc;
+        }, {});
 
-        const formattedData = data.map((item) => ({
-            name: item.name,
-            values: item.values,
-        }));
+
         const leadData = await Lead.findById(itemId);
         // console.log(formattedData, incomingData);
 
@@ -149,6 +166,8 @@ exports.getEditLeadItem = async (req, res) => {
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 exports.postEditLeadItem = async (req, res) => {
     const newdate = () => {
@@ -164,18 +183,25 @@ exports.postEditLeadItem = async (req, res) => {
         const formatter = new Intl.DateTimeFormat([], options);
         return formatter.format(new Date());
     }
-    const staticDropdownData = {
-        source: "669258512f5aaf7d9cb3cd56",
-        agent_name: "6692586f2f5aaf7d9cb3cd58",
-        language: "669258992f5aaf7d9cb3cd5a",
-        disease: "669258db2f5aaf7d9cb3cd5c",
-        state: "6692594c2f5aaf7d9cb3cd5e",
-        remark: "669259862f5aaf7d9cb3cd60",
-    };
+
+    const data = await Dropdown.find();
+    const formattedData = data.reduce((acc, item) => {
+        // Ensure the item contains the necessary properties
+        if (item.name && item.values && item._id) {
+            acc[item.name.toLowerCase()] = {
+                values: item.values,
+                id: item._id // Assuming `_id` is the key you want to use for IDs
+            };
+        }
+        return acc;
+    }, {});
+    // console.log(formattedData["source"].id)
+
+
     const commonFields = {
         date: newdate(),
         source: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.source),
+            dropdown_data: formattedData["source"].id,
             value: req.body.formData.source,
         },
         CM_First_Name: req.body.formData.cmFirstName,
@@ -183,27 +209,27 @@ exports.postEditLeadItem = async (req, res) => {
         CM_Phone: req.body.formData.cmphone,
         alternate_Phone: req.body.formData.cmPhoneAlternateNumber,
         agent_name: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.agent_name),
+            dropdown_data: formattedData["agent name"].id,
             value: req.body.formData.agent_name,
         },
         language: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.language),
+            dropdown_data: formattedData["language"].id,
             value: req.body.formData.language,
         },
         disease: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.disease),
+            dropdown_data: formattedData["disease"].id,
             value: req.body.formData.disease,
         },
         age: req.body.formData.age,
         height: req.body.formData.height,
         weight: req.body.formData.weight,
         state: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.state),
+            dropdown_data: formattedData["state"].id,
             value: req.body.formData.state,
         },
         city: req.body.formData.city,
         remark: {
-            dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.remark),
+            dropdown_data: formattedData["remark"].id,
             value: req.body.formData.remark,
         },
         comment: req.body.formData.comment,
@@ -253,7 +279,7 @@ exports.postEditLeadItem = async (req, res) => {
         workbookItem.CM_First_Name = commonFields.CM_First_Name;
         workbookItem.CM_Last_Name = commonFields.CM_Last_Name;
         workbookItem.CM_Phone = commonFields.CM_Phone;
-        workbookItem.alternative_Number = commonFields.alternative_Number;
+        workbookItem.alternate_Phone = commonFields.alternate_Phone;
         workbookItem.agent_name = commonFields.agent_name;
         workbookItem.language = commonFields.language;
         workbookItem.disease = commonFields.disease;
@@ -274,3 +300,6 @@ exports.postEditLeadItem = async (req, res) => {
         res.status(500).send("An error occurred while updating the data.");
     }
 }
+
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
