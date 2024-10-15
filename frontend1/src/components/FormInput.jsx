@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-const FormInputIncoming = ({ label, name, type = 'text', value, onChange, error }) => {
+const FormInput = ({ label, name, type = 'text', value, onChange, error }) => {
     return (
         <div className="form-group mb-4">
             <label className="block mb-2 font-semibold text-gray-200" htmlFor={name}>
@@ -15,7 +15,7 @@ const FormInputIncoming = ({ label, name, type = 'text', value, onChange, error 
             />
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
-    );
+    )
 }
 
-export default FormInputIncoming;
+export default FormInput

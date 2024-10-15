@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
-import FormInputIncoming from '../components/FormInputIncoming';
-import FormSelectIncoming from '../components/FormSelectIncoming';
+import FormInput from '../components/FormInput';
+import FormSelect from '../components/FormSelect';
 
 const API_URL = "http://localhost:5000";
 
@@ -30,12 +30,18 @@ const EditIncomingPage = () => {
     });
     const [errors, setErrors] = useState({});
 
+    // Fetch dropdowns and previous data
     useEffect(() => {
         const fetchDropdownsAndPrevData = async () => {
             try {
                 const { data } = await axios.get(`${API_URL}/editIncomingItem/${id}`);
                 setDropdowns(data.dropdowns);
-                setFormData(formatPrevData(data.prevData));
+                const formattedData = formatPrevData(data.prevData);
+                setFormData(formattedData);
+
+                // Log after setting the states
+                // console.log('Dropdowns:', data.dropdowns);
+                // console.log('Formatted Previous Data:', formattedData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -43,30 +49,40 @@ const EditIncomingPage = () => {
         fetchDropdownsAndPrevData();
     }, [id]);
 
-    const formatPrevData = (prevData) => ({
-        source: prevData.source?.value || '',
-        cmFirstName: prevData.CM_First_Name || '',
-        cmLastName: prevData.CM_Last_Name || '',
-        cmphone: prevData.CM_Phone || '',
-        cmPhoneAlternateNumber: prevData.alternate_Phone || '',
-        agent_name: prevData.agent_name?.value || '',
-        language: prevData.language?.value || '',
-        disease: prevData.disease?.value || '',
-        age: prevData.age || '',
-        height: prevData.height || '',
-        weight: prevData.weight || '',
-        state: prevData.state?.value || '',
-        city: prevData.city || '',
-        remark: prevData.remark?.value || '',
-        comment: prevData.comment || ''
-    });
 
+    // Format previous data for form
+    const formatPrevData = (prevData) => {
+        // console.log('Raw Previous Data:', prevData); // Log raw previous data
+        const formattedData = {
+            source: prevData.source?.value || '', // Adjust if source is an object
+            cmFirstName: prevData.CM_First_Name || '',
+            cmLastName: prevData.CM_Last_Name || '',
+            cmphone: prevData.CM_Phone || '',
+            cmPhoneAlternateNumber: prevData.alternate_Phone || '',
+            agent_name: prevData.agent_name?.value || '',
+            language: prevData.language?.value || '',
+            disease: prevData.disease?.value || '',
+            age: prevData.age || '',
+            height: prevData.height || '',
+            weight: prevData.weight || '',
+            state: prevData.state?.value || '',
+            city: prevData.city || '',
+            remark: prevData.remark?.value || '',
+            comment: prevData.comment || ''
+        };
+
+        // console.log('Formatted Previous Data:', formattedData); // Log formatted data
+        return formattedData;
+    };
+
+    // Handle input changes
     const handleChange = (e) => {
         const { name, value, type } = e.target;
         const newValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
         setFormData(prev => ({ ...prev, [name]: newValue }));
     };
 
+    // Validate form data
     const validate = () => {
         const newErrors = {};
         const requiredFields = ['source', 'cmFirstName', 'cmLastName', 'cmphone', 'agent_name', 'language', 'disease', 'age', 'height', 'weight', 'state', 'city', 'remark', 'comment'];
@@ -96,6 +112,7 @@ const EditIncomingPage = () => {
         return newErrors;
     };
 
+    // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
         const validationErrors = validate();
@@ -103,7 +120,8 @@ const EditIncomingPage = () => {
             setErrors(validationErrors);
             return;
         }
-        console.log(formData)
+
+        // console.log('Submitting Form Data:', formData); // Log form data on submit
 
         try {
             await axios.post(`${API_URL}/editIncomingItem`, { formData, id });
@@ -123,19 +141,19 @@ const EditIncomingPage = () => {
                 <h1 className="text-3xl font-semibold mb-6 text-center text-gray-100">Edit Incoming Data</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {dropdowns[1] && (
-                        <FormSelectIncoming
+                    {dropdowns["source"] && (
+                        <FormSelect
                             label="Source"
                             name="source"
-                            dropdown={dropdowns[1]}
+                            dropdown={dropdowns["source"]}
                             value={formData.source}
                             onChange={handleChange}
-                            error={errors.source}
+                            error={errors.source} // Show error if exists
                         />
                     )}
 
                     {/* Text Inputs */}
-                    <FormInputIncoming
+                    <FormInput
                         label="CM First Name"
                         type="text"
                         name="cmFirstName"
@@ -143,7 +161,7 @@ const EditIncomingPage = () => {
                         onChange={handleChange}
                         error={errors.cmFirstName} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="CM Last Name"
                         type="text"
                         name="cmLastName"
@@ -151,7 +169,7 @@ const EditIncomingPage = () => {
                         onChange={handleChange}
                         error={errors.cmLastName} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="CM Phone"
                         type="number"
                         name="cmphone"
@@ -159,7 +177,7 @@ const EditIncomingPage = () => {
                         onChange={handleChange}
                         error={errors.cmphone} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="CM Alternate Number"
                         type="number"
                         name="cmPhoneAlternateNumber"
@@ -169,11 +187,11 @@ const EditIncomingPage = () => {
                     />
 
                     {/* Agent Name Dropdown */}
-                    {dropdowns[2] && (
-                        <FormSelectIncoming
+                    {dropdowns["agent name"] && (
+                        <FormSelect
                             label="Agent Name"
                             name="agent_name"
-                            dropdown={dropdowns[2]}
+                            dropdown={dropdowns["agent name"]}
                             value={formData.agent_name}
                             onChange={handleChange}
                             error={errors.agent_name} // Show error if exists
@@ -181,11 +199,11 @@ const EditIncomingPage = () => {
                     )}
 
                     {/* Language Dropdown */}
-                    {dropdowns[3] && (
-                        <FormSelectIncoming
+                    {dropdowns["language"] && (
+                        <FormSelect
                             label="Language"
                             name="language"
-                            dropdown={dropdowns[3]}
+                            dropdown={dropdowns["language"]}
                             value={formData.language}
                             onChange={handleChange}
                             error={errors.language} // Show error if exists
@@ -193,11 +211,11 @@ const EditIncomingPage = () => {
                     )}
 
                     {/* Disease Dropdown */}
-                    {dropdowns[4] && (
-                        <FormSelectIncoming
+                    {dropdowns["disease"] && (
+                        <FormSelect
                             label="Disease"
                             name="disease"
-                            dropdown={dropdowns[4]}
+                            dropdown={dropdowns["disease"]}
                             value={formData.disease}
                             onChange={handleChange}
                             error={errors.disease} // Show error if exists
@@ -205,7 +223,7 @@ const EditIncomingPage = () => {
                     )}
 
                     {/* More Text Inputs */}
-                    <FormInputIncoming
+                    <FormInput
                         label="Age"
                         type="number"
                         name="age"
@@ -213,7 +231,7 @@ const EditIncomingPage = () => {
                         onChange={handleChange}
                         error={errors.age} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="Height"
                         type="number"
                         name="height"
@@ -221,7 +239,7 @@ const EditIncomingPage = () => {
                         onChange={handleChange}
                         error={errors.height} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="Weight"
                         type="number"
                         name="weight"
@@ -231,18 +249,18 @@ const EditIncomingPage = () => {
                     />
 
                     {/* State Dropdown */}
-                    {dropdowns[5] && (
-                        <FormSelectIncoming
+                    {dropdowns["state"] && (
+                        <FormSelect
                             label="State"
                             name="state"
-                            dropdown={dropdowns[5]}
+                            dropdown={dropdowns["state"]}
                             value={formData.state}
                             onChange={handleChange}
                             error={errors.state} // Show error if exists
                         />
                     )}
 
-                    <FormInputIncoming
+                    <FormInput
                         label="City/District"
                         type="text"
                         name="city"
@@ -252,18 +270,18 @@ const EditIncomingPage = () => {
                     />
 
                     {/* Remark Dropdown */}
-                    {dropdowns[6] && (
-                        <FormSelectIncoming
+                    {dropdowns["remark"] && (
+                        <FormSelect
                             label="Remark"
                             name="remark"
-                            dropdown={dropdowns[6]}
+                            dropdown={dropdowns["remark"]}
                             value={formData.remark}
                             onChange={handleChange}
                             error={errors.remark} // Show error if exists
                         />
                     )}
 
-                    <FormInputIncoming
+                    <FormInput
                         label="Comment"
                         type="text"
                         name="comment"
@@ -273,12 +291,12 @@ const EditIncomingPage = () => {
                     />
                 </div>
 
-                <button type="submit" className="mt-8 w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg text-lg">
-                    Submit
+                <button type="submit" className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded">
+                    Save Changes
                 </button>
             </form>
         </div>
     );
-}
+};
 
 export default EditIncomingPage;

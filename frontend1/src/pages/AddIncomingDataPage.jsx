@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
-import FormInputIncoming from '../components/FormInputIncoming';
-import FormSelectIncoming from '../components/FormSelectIncoming';
+import FormInput from '../components/FormInput';
+import FormSelect from '../components/FormSelect';
 
 const AddIncomingDataPage = () => {
     const [dropdowns, setDropdowns] = useState({});
@@ -111,7 +111,7 @@ const AddIncomingDataPage = () => {
         }
 
         try {
-            console.log(formData)
+            // console.log(formData)
             const response = await axios.post(`${API_URL}/addIncomingData`, formData);
             // console.log(response.data.message);
             navigate('/incoming');
@@ -135,7 +135,7 @@ const AddIncomingDataPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Source Dropdown */}
                     {dropdowns["source"] && (
-                        <FormSelectIncoming
+                        <FormSelect
                             label="Source"
                             name="source"
                             dropdown={dropdowns["source"]}
@@ -146,7 +146,7 @@ const AddIncomingDataPage = () => {
                     )}
 
                     {/* Text Inputs */}
-                    <FormInputIncoming
+                    <FormInput
                         label="CM First Name"
                         type="text"
                         name="cmFirstName"
@@ -154,7 +154,7 @@ const AddIncomingDataPage = () => {
                         onChange={handleChange}
                         error={errors.cmFirstName} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="CM Last Name"
                         type="text"
                         name="cmLastName"
@@ -162,7 +162,7 @@ const AddIncomingDataPage = () => {
                         onChange={handleChange}
                         error={errors.cmLastName} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="CM Phone"
                         type="number"
                         name="cmphone"
@@ -170,7 +170,7 @@ const AddIncomingDataPage = () => {
                         onChange={handleChange}
                         error={errors.cmphone} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="CM Alternate Number"
                         type="number"
                         name="cmPhoneAlternateNumber"
@@ -181,7 +181,7 @@ const AddIncomingDataPage = () => {
 
                     {/* Agent Name Dropdown */}
                     {dropdowns["agent name"] && (
-                        <FormSelectIncoming
+                        <FormSelect
                             label="Agent Name"
                             name="agent_name"
                             dropdown={dropdowns["agent name"]}
@@ -193,7 +193,7 @@ const AddIncomingDataPage = () => {
 
                     {/* Language Dropdown */}
                     {dropdowns["language"] && (
-                        <FormSelectIncoming
+                        <FormSelect
                             label="Language"
                             name="language"
                             dropdown={dropdowns["language"]}
@@ -205,7 +205,7 @@ const AddIncomingDataPage = () => {
 
                     {/* Disease Dropdown */}
                     {dropdowns["disease"] && (
-                        <FormSelectIncoming
+                        <FormSelect
                             label="Disease"
                             name="disease"
                             dropdown={dropdowns["disease"]}
@@ -216,7 +216,7 @@ const AddIncomingDataPage = () => {
                     )}
 
                     {/* More Text Inputs */}
-                    <FormInputIncoming
+                    <FormInput
                         label="Age"
                         type="number"
                         name="age"
@@ -224,7 +224,7 @@ const AddIncomingDataPage = () => {
                         onChange={handleChange}
                         error={errors.age} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="Height"
                         type="number"
                         name="height"
@@ -232,7 +232,7 @@ const AddIncomingDataPage = () => {
                         onChange={handleChange}
                         error={errors.height} // Show error if exists
                     />
-                    <FormInputIncoming
+                    <FormInput
                         label="Weight"
                         type="number"
                         name="weight"
@@ -243,7 +243,7 @@ const AddIncomingDataPage = () => {
 
                     {/* State Dropdown */}
                     {dropdowns["state"] && (
-                        <FormSelectIncoming
+                        <FormSelect
                             label="State"
                             name="state"
                             dropdown={dropdowns["state"]}
@@ -253,7 +253,7 @@ const AddIncomingDataPage = () => {
                         />
                     )}
 
-                    <FormInputIncoming
+                    <FormInput
                         label="City/District"
                         type="text"
                         name="city"
@@ -264,7 +264,7 @@ const AddIncomingDataPage = () => {
 
                     {/* Remark Dropdown */}
                     {dropdowns["remark"] && (
-                        <FormSelectIncoming
+                        <FormSelect
                             label="Remark"
                             name="remark"
                             dropdown={dropdowns["remark"]}
@@ -274,7 +274,7 @@ const AddIncomingDataPage = () => {
                         />
                     )}
 
-                    <FormInputIncoming
+                    <FormInput
                         label="Comment"
                         type="text"
                         name="comment"

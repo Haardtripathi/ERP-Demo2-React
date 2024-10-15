@@ -40,7 +40,13 @@ const CommonRow = ({ rowData, setData }) => {
         <tr className="hover:bg-gray-100 text-sm">
             <td className="py-2 px-4 border-b border-gray-300">
                 <form onSubmit={getEdit}>
-                    <button className="bg-blue-500 text-white py-1 px-2 rounded" type="submit">Edit</button>
+                    <button
+                        className={`py-1 px-2 rounded ${rowData.isSentToPending ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                        type="submit"
+                        disabled={rowData.isSentToPending}
+                    >
+                        {rowData.isSentToPending ? "Edit" : "Edit"}
+                    </button>
                 </form>
             </td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.date}</td>

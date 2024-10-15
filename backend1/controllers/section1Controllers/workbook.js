@@ -17,13 +17,52 @@ exports.getIndex = (req, res, next) => {
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+const MODEL_MAPPING = {
+    'Lead': Lead,
+    'Incoming': Incoming
+};
+
+async function getPopulatedData() {
+    try {
+        const workbooks = await Workbook.find().lean();
+
+        const populatedData = await Promise.all(
+            workbooks.map(async (workbook) => {
+                const Model = MODEL_MAPPING[workbook.data.value];
+
+                if (!Model) {
+                    return null;
+                }
+
+                const populatedDoc = await Model.findOne({ _id: workbook.dataId, isDeleted: false }).lean();
+
+                if (populatedDoc) {
+                    return {
+                        _id: workbook._id,
+                        data: workbook.data,
+                        dataId: workbook.dataId,
+                        populatedData: populatedDoc
+                    };
+                }
+
+                return null;
+            })
+        );
+
+        return populatedData.filter(item => item !== null);
+    } catch (error) {
+        console.error('Error populating data:', error);
+        throw error;
+    }
+}
+
 exports.getWorkbook = async (req, res, next) => {
     try {
-        const data = await Workbook.find({ isDeleted: false });
-        // console.log(data); // Add this line
+        const data = await getPopulatedData();
         res.json(data);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Error in getWorkbook:', err);
+        res.status(500).json({ message: 'An error occurred while fetching workbook data' });
     }
 };
 
@@ -56,7 +95,7 @@ exports.deleteWorkbookItem = async (req, res, next) => {
 };
 
 
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------    -----------------------------------------------------------------------------------------------------------------
 
 // exports.getEditWorkbookItem = async (req, res) => {
 //     console.log("Hello world!");
@@ -78,91 +117,92 @@ exports.deleteWorkbookItem = async (req, res, next) => {
 //     }
 // }
 
-
 exports.sendToPending = async (req, res, next) => {
-    const itemId = req.body.itemId;
-    const dataId = req.body.dataId;
-    const dataValue = req.body.dataValue;
+    const { itemId, dataId, dataValue } = req.body;
     try {
-        const staticDropdownData = {
-            source: "669258512f5aaf7d9cb3cd56",
-            agent_name: "6692586f2f5aaf7d9cb3cd58",
-            language: "669258992f5aaf7d9cb3cd5a",
-            disease: "669258db2f5aaf7d9cb3cd5c",
-            state: "6692594c2f5aaf7d9cb3cd5e",
-            remark: "669259862f5aaf7d9cb3cd60",
-            payment_type: "66ca09f9efcae9d04adb3610",
-            sale_type: "66ca09c6efcae9d04adb360e",
-            status: "66cd80b921c654779763c616",
-            shipment_type: "66ca0a39efcae9d04adb3612",
-            post_type: "66ca0abfefcae9d04adb3616",
-            disease: "669258db2f5aaf7d9cb3cd5c",
-            amount: "66cb7b392d2b09775bd57dfa",
-            products: "66cb7b9c2d2b09775bd57dfc"
-        };
+        const data1 = await Dropdown.find();
+        const formattedData = data1.reduce((acc, item) => {
+            if (item.name && item.values && item._id) {
+                acc[item.name.toLowerCase()] = {
+                    values: item.values,
+                    id: item._id
+                };
+            }
+            return acc;
+        }, {});
 
-        const data = await Workbook.findOne({ _id: itemId })
-        // console.log(data)
+        let data;
+        if (dataValue.toLowerCase() === "incoming") {
+            data = await Incoming.findOne({ _id: dataId });
+        } else if (dataValue.toLowerCase() === "lead") {
+            data = await Lead.findOne({ _id: dataId });
+        } else {
+            return res.status(400).json({ error: "Invalid dataValue. Must be 'Incoming' or 'Lead'." });
+        }
+
+        if (!data) {
+            return res.status(404).json({ error: `${dataValue} data not found for the given dataId.` });
+        }
 
         const pendingData = new Pending({
             payment_type: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.payment_type),
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["payment type"]?.id),
             },
             sale_type: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.sale_type),
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["sale type"]?.id),
             },
             source: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.source),
-                value: data.source.value,
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["source"]?.id),
+                value: data.source?.value,
             },
             agent_name: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.agent_name),
-                value: data.agent_name.value,
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["agent name"]?.id),
+                value: data.agent_name?.value,
             },
             CM_First_Name: data.CM_First_Name,
             CM_Last_Name: data.CM_Last_Name,
             CM_Phone: data.CM_Phone,
             alternate_Phone: data.alternate_Phone,
             status: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.status),
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["status"]?.id),
             },
             comment: data.comment,
             shipment_type: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.shipment_type),
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["shipment type"]?.id),
             },
             post_type: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.post_type),
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["post type"]?.id),
             },
             City_District: data.city,
             state: {
-                dropdown_data: data.state.dropdown_data,
-                value: data.state.value,
+                dropdown_data: formattedData["state"]?.id,
+                value: data.state?.value,
             },
             disease: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.disease),
-                value: data.disease.value,
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["disease"]?.id),
+                value: data.disease?.value,
             },
             amount: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.amount),
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["amount"]?.id),
             },
             products: {
-                dropdown_data: new mongoose.Types.ObjectId(staticDropdownData.products),
+                dropdown_data: new mongoose.Types.ObjectId(formattedData["products"]?.id),
             },
-        })
+        });
 
-        await pendingData.save()
-        // console.log(dataId)
-        const deleteWorkBookData = await Workbook.updateOne({ _id: itemId }, { isSentToPending: true });
-        if (dataValue === "Incoming") {
-            await Incoming.updateOne({ _id: dataId }, { isSentToPending: true })
+        await pendingData.save();
+
+        const updateWorkBookData = await Workbook.updateOne({ _id: itemId }, { isSentToPending: true });
+
+        if (dataValue.toLowerCase() === "incoming") {
+            await Incoming.updateOne({ _id: dataId }, { isSentToPending: true });
+        } else {
+            await Lead.updateOne({ _id: dataId }, { isSentToPending: true });
         }
-        else {
-            await Lead.updateOne({ _id: dataId }, { isSentToPending: true })
-        }
+
         res.json({ success: true, message: "Data successfully sent to pending." });
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error in sendToPending:", error);
+        res.status(500).json({ error: "Internal Server Error", details: error.message });
     }
-
-}
+};

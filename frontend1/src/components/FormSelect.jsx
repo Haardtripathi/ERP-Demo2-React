@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-const FormSelectIncoming = ({ label, name, dropdown, onChange, value, error }) => {
+const FormSelect = ({ label, name, dropdown, onChange, value, error }) => {
     return (
         <div className="form-group mb-4">
             <label className="block mb-2 font-semibold text-gray-200" htmlFor={name}>
@@ -24,4 +24,4 @@ const FormSelectIncoming = ({ label, name, dropdown, onChange, value, error }) =
     );
 }
 
-export default FormSelectIncoming;
+export default FormSelect

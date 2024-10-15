@@ -116,9 +116,7 @@ exports.addLeadItem = async (req, res) => {
                     dropdown_data: new mongoose.Types.ObjectId(req.body.data_dd_id),
                     value: "Lead",
                 },
-                dataId: savedLead._id,
-                date: savedLead.date,
-                ...commonFields,
+                dataId: savedLead._id
             });
 
             await workbookData.save();
@@ -138,33 +136,40 @@ exports.addLeadItem = async (req, res) => {
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
 exports.getEditLeadItem = async (req, res) => {
+    // console.log("getEditLeadItem function called");
     const itemId = req.params.id;
+    // console.log("Item ID:", itemId);
+
     try {
         const data = await Dropdown.find();
+        // console.log("Dropdown data fetched:", data.length, "items");
+
         const formattedData = data.reduce((acc, item) => {
-            // Ensure the item contains the necessary properties
             if (item.name && item.values && item._id) {
                 acc[item.name.toLowerCase()] = {
                     values: item.values,
-                    id: item._id // Assuming `_id` is the key you want to use for IDs
+                    id: item._id
                 };
             }
             return acc;
         }, {});
-
+        // console.log("Formatted dropdown data:", Object.keys(formattedData));
 
         const leadData = await Lead.findById(itemId);
-        // console.log(formattedData, incomingData);
+        // console.log("Lead data:", leadData);
 
-        res.json({ dropdowns: formattedData, prevData: leadData }); // Send as JSON response
+        if (!leadData) {
+            console.log("No lead found with ID:", itemId);
+            return res.status(404).json({ error: "Lead not found" });
+        }
+
+        res.json({ dropdowns: formattedData, prevData: leadData });
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error in getEditLeadItem:", err);
+        res.status(500).json({ error: "Internal Server Error", details: err.message });
     }
 }
-
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -266,34 +271,7 @@ exports.postEditLeadItem = async (req, res) => {
         leadItem.comment = commonFields.comment;
 
         await leadItem.save();
-
-        // Find and update the Workbook
-        const workbookItem = await Workbook.findOne({ dataId: dataId });
-
-        if (!workbookItem) {
-            throw new Error('Workbook item not found');
-        }
-
-        workbookItem.source = commonFields.source;
-        workbookItem.date = commonFields.date;
-        workbookItem.CM_First_Name = commonFields.CM_First_Name;
-        workbookItem.CM_Last_Name = commonFields.CM_Last_Name;
-        workbookItem.CM_Phone = commonFields.CM_Phone;
-        workbookItem.alternate_Phone = commonFields.alternate_Phone;
-        workbookItem.agent_name = commonFields.agent_name;
-        workbookItem.language = commonFields.language;
-        workbookItem.disease = commonFields.disease;
-        workbookItem.age = commonFields.age;
-        workbookItem.height = commonFields.height;
-        workbookItem.weight = commonFields.weight;
-        workbookItem.state = commonFields.state;
-        workbookItem.city = commonFields.city;
-        workbookItem.remark = commonFields.remark;
-        workbookItem.comment = commonFields.comment;
-
-        await workbookItem.save();
-        res.status(200).json({ message: 'Data updated successfully!' });
-        console.log("UPDATED PRODUCT!");
+        res.status(200).send("Updated the data.");
 
     } catch (err) {
         console.error(err);

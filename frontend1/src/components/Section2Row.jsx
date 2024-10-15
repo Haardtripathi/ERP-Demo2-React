@@ -7,9 +7,25 @@ const Section2Row = ({ rowData, setData, isPendingPage }) => {
     const location = useLocation();
     const navigate = useNavigate();
     // console.log(rowData);
+    const getEdit = (event) => {
+        event.preventDefault();
+        let endpoint = `/editPendingData/${rowData._id}`;
+
+        navigate(endpoint);
+    };
 
     return (
         <tr className="hover:bg-gray-100 text-sm">
+            <td className="py-2 px-4 border-b border-gray-300">
+                <form onSubmit={getEdit}>
+                    <button
+                        className={`py-1 px-2 rounded 'bg-blue-500 text-white'}`}
+                        type="submit"
+                    >
+                        Edit
+                    </button>
+                </form>
+            </td>
 
             <td className="py-2 px-4 border-b border-gray-300">{rowData.ref}</td>
             <td className="py-2 px-4 border-b border-gray-300">{rowData.date}</td>

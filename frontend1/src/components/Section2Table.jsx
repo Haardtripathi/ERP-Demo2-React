@@ -8,6 +8,7 @@ const Section2Table = ({ data, setData, isPendingPage }) => {
                 <table className="min-w-full bg-white border border-gray-300 text-lg">
                     <thead className="sticky top-0 bg-gray-800 text-white">
                         <tr className="text-l">
+                            <th scope="col" className="py-4 px-6 border-b border-gray-300">Edit</th>
                             <th scope="col" className="py-4 px-6 border-b border-gray-300">Ref</th>
                             <th scope="col" className="py-4 px-6 border-b border-gray-300">Date</th>
                             <th scope="col" className="py-4 px-6 border-b border-gray-300">Time</th>

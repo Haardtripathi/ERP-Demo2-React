@@ -76,7 +76,7 @@ exports.postAddIncomingData = async (req, res, next) => {
     try {
         // console.log(req.body);   
 
-        // Validate ObjectIds before converting
+        // Validate ObjectIds before converting 
         if (!isValidObjectId(req.body.source_id)) {
             return res.status(400).json({ message: 'Invalid source ID' });
         }
@@ -144,7 +144,6 @@ exports.postAddIncomingData = async (req, res, next) => {
                 value: "Incoming",
             },
             dataId: savedIncomingData._id,
-            ...commonFields,
         });
 
         // Save workbook data
@@ -263,31 +262,6 @@ exports.postEditIncomingItem = async (req, res) => {
         incomingItem.comment = commonFields.comment;
 
         await incomingItem.save();
-
-        // Find and update the Workbook
-        const workbookItem = await Workbook.findOne({ dataId: dataId });
-
-        if (!workbookItem) {
-            throw new Error('Workbook item not found');
-        }
-
-        workbookItem.source = commonFields.source;
-        workbookItem.CM_First_Name = commonFields.CM_First_Name;
-        workbookItem.CM_Last_Name = commonFields.CM_Last_Name;
-        workbookItem.CM_Phone = commonFields.CM_Phone;
-        workbookItem.alternative_Phone = commonFields.alternative_Phone;
-        workbookItem.agent_name = commonFields.agent_name;
-        workbookItem.language = commonFields.language;
-        workbookItem.disease = commonFields.disease;
-        workbookItem.age = commonFields.age;
-        workbookItem.height = commonFields.height;
-        workbookItem.weight = commonFields.weight;
-        workbookItem.state = commonFields.state;
-        workbookItem.city = commonFields.city;
-        workbookItem.remark = commonFields.remark;
-        workbookItem.comment = commonFields.comment;
-
-        await workbookItem.save();
         res.status(200).json({ message: 'Data updated successfully!' });
         console.log("UPDATED PRODUCT!");
 
